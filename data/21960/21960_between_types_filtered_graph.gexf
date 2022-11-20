@@ -1,0 +1,765 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2022-11-20">
+    <creator>NetworkX 2.4</creator>
+  </meta>
+  <graph defaultedgetype="directed" mode="static" name="">
+    <attributes mode="static" class="edge">
+      <attribute id="0" title="transaction_num" type="long" />
+    </attributes>
+    <nodes>
+      <node id="EXT" label="EXT" />
+      <node id="COR" label="COR" />
+      <node id="ABS" label="ABS" />
+      <node id="BRA" label="BRA" />
+      <node id="HOL" label="HOL" />
+      <node id="FAF" label="FAF" />
+      <node id="PVT" label="PVT" />
+      <node id="UIT" label="UIT" />
+      <node id="PVF" label="PVF" />
+      <node id="nan" label="nan" />
+      <node id="BAS" label="BAS" />
+      <node id="MUT" label="MUT" />
+      <node id="CAC" label="CAC" />
+      <node id="HED" label="HED" />
+      <node id="VEN" label="VEN" />
+      <node id="GOV" label="GOV" />
+      <node id="PRO" label="PRO" />
+      <node id="NPO" label="NPO" />
+      <node id="ESP" label="ESP" />
+      <node id="SUB" label="SUB" />
+      <node id="PRT" label="PRT" />
+      <node id="PUB" label="PUB" />
+      <node id="MUE" label="MUE" />
+      <node id="FND" label="FND" />
+      <node id="SOV" label="SOV" />
+      <node id="PEF" label="PEF" />
+      <node id="UMB" label="UMB" />
+      <node id="SHP" label="SHP" />
+      <node id="JVT" label="JVT" />
+      <node id="TRU" label="TRU" />
+      <node id="MUC" label="MUC" />
+      <node id="COL" label="COL" />
+      <node id="OPD" label="OPD" />
+      <node id="FNS" label="FNS" />
+      <node id="MED" label="MED" />
+    </nodes>
+    <edges>
+      <edge source="EXT" target="HOL" id="0">
+        <attvalues>
+          <attvalue for="0" value="61" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="PVT" id="1">
+        <attvalues>
+          <attvalue for="0" value="194" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="GOV" id="2">
+        <attvalues>
+          <attvalue for="0" value="42" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="NPO" id="3">
+        <attvalues>
+          <attvalue for="0" value="14" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="SUB" id="4">
+        <attvalues>
+          <attvalue for="0" value="133" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="PUB" id="5">
+        <attvalues>
+          <attvalue for="0" value="1095" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="FND" id="6">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="JVT" id="7">
+        <attvalues>
+          <attvalue for="0" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="MUC" id="8">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="EXT" target="COL" id="9">
+        <attvalues>
+          <attvalue for="0" value="14" />
+        </attvalues>
+      </edge>
+      <edge source="COR" target="PUB" id="10">
+        <attvalues>
+          <attvalue for="0" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="EXT" id="11">
+        <attvalues>
+          <attvalue for="0" value="62" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="COR" id="12">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="PVT" id="13">
+        <attvalues>
+          <attvalue for="0" value="485" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="PVF" id="14">
+        <attvalues>
+          <attvalue for="0" value="5" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="GOV" id="15">
+        <attvalues>
+          <attvalue for="0" value="124" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="NPO" id="16">
+        <attvalues>
+          <attvalue for="0" value="67" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="SUB" id="17">
+        <attvalues>
+          <attvalue for="0" value="418" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="PUB" id="18">
+        <attvalues>
+          <attvalue for="0" value="4128" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="FND" id="19">
+        <attvalues>
+          <attvalue for="0" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="SHP" id="20">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="JVT" id="21">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="MUC" id="22">
+        <attvalues>
+          <attvalue for="0" value="16" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="COL" id="23">
+        <attvalues>
+          <attvalue for="0" value="47" />
+        </attvalues>
+      </edge>
+      <edge source="HOL" target="OPD" id="24">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="EXT" id="25">
+        <attvalues>
+          <attvalue for="0" value="98" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="COR" id="26">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="HOL" id="27">
+        <attvalues>
+          <attvalue for="0" value="183" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="PVF" id="28">
+        <attvalues>
+          <attvalue for="0" value="43" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="HED" id="29">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="VEN" id="30">
+        <attvalues>
+          <attvalue for="0" value="13" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="GOV" id="31">
+        <attvalues>
+          <attvalue for="0" value="71" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="NPO" id="32">
+        <attvalues>
+          <attvalue for="0" value="14" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="SUB" id="33">
+        <attvalues>
+          <attvalue for="0" value="833" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="PRT" id="34">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="PUB" id="35">
+        <attvalues>
+          <attvalue for="0" value="10070" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="JVT" id="36">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="MUC" id="37">
+        <attvalues>
+          <attvalue for="0" value="76" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="COL" id="38">
+        <attvalues>
+          <attvalue for="0" value="23" />
+        </attvalues>
+      </edge>
+      <edge source="PVT" target="OPD" id="39">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PVF" target="PVT" id="40">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PVF" target="GOV" id="41">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PVF" target="SUB" id="42">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="PVF" target="PUB" id="43">
+        <attvalues>
+          <attvalue for="0" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="nan" target="PUB" id="44">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="VEN" target="PUB" id="45">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="GOV" target="EXT" id="46">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="GOV" target="PVT" id="47">
+        <attvalues>
+          <attvalue for="0" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="GOV" target="PVF" id="48">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="GOV" target="NPO" id="49">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="GOV" target="SUB" id="50">
+        <attvalues>
+          <attvalue for="0" value="69" />
+        </attvalues>
+      </edge>
+      <edge source="GOV" target="PUB" id="51">
+        <attvalues>
+          <attvalue for="0" value="394" />
+        </attvalues>
+      </edge>
+      <edge source="GOV" target="FND" id="52">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="NPO" target="EXT" id="53">
+        <attvalues>
+          <attvalue for="0" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="NPO" target="HOL" id="54">
+        <attvalues>
+          <attvalue for="0" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="NPO" target="PVT" id="55">
+        <attvalues>
+          <attvalue for="0" value="5" />
+        </attvalues>
+      </edge>
+      <edge source="NPO" target="PVF" id="56">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="NPO" target="SUB" id="57">
+        <attvalues>
+          <attvalue for="0" value="61" />
+        </attvalues>
+      </edge>
+      <edge source="NPO" target="PUB" id="58">
+        <attvalues>
+          <attvalue for="0" value="452" />
+        </attvalues>
+      </edge>
+      <edge source="NPO" target="OPD" id="59">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="EXT" id="60">
+        <attvalues>
+          <attvalue for="0" value="146" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="COR" id="61">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="HOL" id="62">
+        <attvalues>
+          <attvalue for="0" value="527" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="PVT" id="63">
+        <attvalues>
+          <attvalue for="0" value="1676" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="PVF" id="64">
+        <attvalues>
+          <attvalue for="0" value="10" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="nan" id="65">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="HED" id="66">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="VEN" id="67">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="GOV" id="68">
+        <attvalues>
+          <attvalue for="0" value="456" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="NPO" id="69">
+        <attvalues>
+          <attvalue for="0" value="154" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="PRT" id="70">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="PUB" id="71">
+        <attvalues>
+          <attvalue for="0" value="9556" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="FND" id="72">
+        <attvalues>
+          <attvalue for="0" value="17" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="SHP" id="73">
+        <attvalues>
+          <attvalue for="0" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="JVT" id="74">
+        <attvalues>
+          <attvalue for="0" value="17" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="MUC" id="75">
+        <attvalues>
+          <attvalue for="0" value="25" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="COL" id="76">
+        <attvalues>
+          <attvalue for="0" value="101" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="OPD" id="77">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="SUB" target="FNS" id="78">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="EXT" id="79">
+        <attvalues>
+          <attvalue for="0" value="1307" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="COR" id="80">
+        <attvalues>
+          <attvalue for="0" value="14" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="ABS" id="81">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="BRA" id="82">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="HOL" id="83">
+        <attvalues>
+          <attvalue for="0" value="5709" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="PVT" id="84">
+        <attvalues>
+          <attvalue for="0" value="23316" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="PVF" id="85">
+        <attvalues>
+          <attvalue for="0" value="42" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="nan" id="86">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="BAS" id="87">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="MUT" id="88">
+        <attvalues>
+          <attvalue for="0" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="HED" id="89">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="VEN" id="90">
+        <attvalues>
+          <attvalue for="0" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="GOV" id="91">
+        <attvalues>
+          <attvalue for="0" value="5453" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="PRO" id="92">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="NPO" id="93">
+        <attvalues>
+          <attvalue for="0" value="1324" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="ESP" id="94">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="SUB" id="95">
+        <attvalues>
+          <attvalue for="0" value="12371" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="PRT" id="96">
+        <attvalues>
+          <attvalue for="0" value="16" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="MUE" id="97">
+        <attvalues>
+          <attvalue for="0" value="14" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="FND" id="98">
+        <attvalues>
+          <attvalue for="0" value="129" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="SOV" id="99">
+        <attvalues>
+          <attvalue for="0" value="9" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="PEF" id="100">
+        <attvalues>
+          <attvalue for="0" value="9" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="SHP" id="101">
+        <attvalues>
+          <attvalue for="0" value="14" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="JVT" id="102">
+        <attvalues>
+          <attvalue for="0" value="235" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="TRU" id="103">
+        <attvalues>
+          <attvalue for="0" value="11" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="MUC" id="104">
+        <attvalues>
+          <attvalue for="0" value="138" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="COL" id="105">
+        <attvalues>
+          <attvalue for="0" value="1247" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="OPD" id="106">
+        <attvalues>
+          <attvalue for="0" value="10" />
+        </attvalues>
+      </edge>
+      <edge source="PUB" target="FNS" id="107">
+        <attvalues>
+          <attvalue for="0" value="11" />
+        </attvalues>
+      </edge>
+      <edge source="FND" target="SUB" id="108">
+        <attvalues>
+          <attvalue for="0" value="5" />
+        </attvalues>
+      </edge>
+      <edge source="FND" target="PUB" id="109">
+        <attvalues>
+          <attvalue for="0" value="41" />
+        </attvalues>
+      </edge>
+      <edge source="SOV" target="PUB" id="110">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="PEF" target="PUB" id="111">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="JVT" target="EXT" id="112">
+        <attvalues>
+          <attvalue for="0" value="8" />
+        </attvalues>
+      </edge>
+      <edge source="JVT" target="HOL" id="113">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="JVT" target="PVT" id="114">
+        <attvalues>
+          <attvalue for="0" value="5" />
+        </attvalues>
+      </edge>
+      <edge source="JVT" target="PVF" id="115">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="JVT" target="GOV" id="116">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="JVT" target="SUB" id="117">
+        <attvalues>
+          <attvalue for="0" value="12" />
+        </attvalues>
+      </edge>
+      <edge source="JVT" target="PUB" id="118">
+        <attvalues>
+          <attvalue for="0" value="78" />
+        </attvalues>
+      </edge>
+      <edge source="TRU" target="PUB" id="119">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="TRU" target="MUC" id="120">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="EXT" id="121">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="HOL" id="122">
+        <attvalues>
+          <attvalue for="0" value="10" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="PVT" id="123">
+        <attvalues>
+          <attvalue for="0" value="20" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="PVF" id="124">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="VEN" id="125">
+        <attvalues>
+          <attvalue for="0" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="GOV" id="126">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="NPO" id="127">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="SUB" id="128">
+        <attvalues>
+          <attvalue for="0" value="11" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="PUB" id="129">
+        <attvalues>
+          <attvalue for="0" value="46" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="FND" id="130">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="MUC" target="TRU" id="131">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="COL" target="EXT" id="132">
+        <attvalues>
+          <attvalue for="0" value="10" />
+        </attvalues>
+      </edge>
+      <edge source="COL" target="HOL" id="133">
+        <attvalues>
+          <attvalue for="0" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="COL" target="PVT" id="134">
+        <attvalues>
+          <attvalue for="0" value="8" />
+        </attvalues>
+      </edge>
+      <edge source="COL" target="SUB" id="135">
+        <attvalues>
+          <attvalue for="0" value="76" />
+        </attvalues>
+      </edge>
+      <edge source="COL" target="PUB" id="136">
+        <attvalues>
+          <attvalue for="0" value="571" />
+        </attvalues>
+      </edge>
+      <edge source="OPD" target="VEN" id="137">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="OPD" target="PUB" id="138">
+        <attvalues>
+          <attvalue for="0" value="8" />
+        </attvalues>
+      </edge>
+      <edge source="FNS" target="EXT" id="139">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="FNS" target="NPO" id="140">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="FNS" target="SUB" id="141">
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="FNS" target="PUB" id="142">
+        <attvalues>
+          <attvalue for="0" value="2" />
+        </attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>

@@ -2,9 +2,13 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 import os
+import sys
 import json
 import itertools
-
+import pathlib
+root_dir = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
+# with open(root_dir+"/data/complete_graph.gexf", "r") as f:
+    # print("THIS WORKS")
 # from classes import *
 countries = {'PK', "nan", 'TW', 'ME', 'AU', 'BH', 'TO', 'BN', 'XK', 'MK', 'FI', 'FM', 'GE', 'SZ', 'KE', 'TJ', 'IT', 
 'CH', 'GT', 'DK', 'AD', 'UZ', 'MT', 'MH', 'CN', 'GL', 'TN', 'GN', 'JO', 'VI', 'AI', 'MU', 'BM', 'CF', 'AT', 'BD', 
@@ -23,7 +27,11 @@ types = {"nan", 'CAC', 'SHP', 'OPD', 'PEF', 'ESP', 'PVT', 'PVF', 'TRU', 'SOV', '
 'SUB', 'HED', 'MUT', 'COR', 'UMB', 'PRT', 'UIT', 'MED', 'MUE', 'BAS', 'PUB', 'ABS', 'MUC', 'NPO', 'HOL', 'FNS', 
 'EXT', 'FND', 'VEN', 'GOV'}
 
-def graph_generation():
+def graph_generation(timeframe=None):
+    if type(timeframe) == list:
+        timeframe = eval(timeframe)
+    elif type(timeframe) == str:
+        timeframe = int(timeframe)
     data = pd.read_csv("../data/globalchain.csv")
     G = nx.Graph()
     # countries = set()
@@ -40,8 +48,16 @@ def graph_generation():
         # Add supplier company if it doesn't exist already. 
         s_id = row["Source"] # (supplier_id)
         c_id = row["Target"] # (supplier id)
-        transaction_info = [s_id, c_id, row["start_"], row["end_"]]
-
+        start = row["start_"]
+        end = row["end_"]
+        transaction_info = [s_id, c_id, start, end]
+        if timeframe:
+            if type(timeframe) == list:
+                if start <= timeframe[0] or end >= timeframe[1]:
+                    continue
+            else:
+                if start >= timeframe or end <= timeframe:
+                    continue
         if s_id not in G.nodes():
             # countries.add(row["s_country"])
             # types.add(row["s_entity_type"])
@@ -89,67 +105,101 @@ def graph_generation():
 
         if not G.has_edge(s_id, c_id):
             G.add_edge(s_id, c_id, supplier=s_id, customer=c_id, history={0 : transaction_info}, transaction_num = 1)  
-        G[s_id][c_id]["history"][len(G[s_id][c_id]["history"])] = transaction_info
+        # G[s_id][c_id]["history"][len(G[s_id][c_id]["history"])] = transaction_info
         G[s_id][c_id]["transaction_num"] = len(G[s_id][c_id]["history"])
         
     for country in countries_grouping:
         countries_grouping[country] = list(countries_grouping[country])
-    for type in types_grouping:
-        types_grouping[type] = list(types_grouping[type])
-
-    nx.write_gexf(G, "../data/full_graph.gexf")
+    for company_type in types_grouping:
+        types_grouping[company_type] = list(types_grouping[company_type])
+    # try:
+    # nx.write_gexf(G, root_dir+"/data/sussy.gexf")
+    if timeframe:
+        nx.write_gexf(G, root_dir+f"/data/{str(timeframe)}/complete_graph.gexf")
+        with open(root_dir+f"/data/{str(timeframe)}/countries_filter.json", "w") as f:
+            json.dump(dict(countries_grouping), f)
+        with open(root_dir+f"/data/{str(timeframe)}/types_filter.json", "w") as f:
+            json.dump(dict(types_grouping), f)
+    else:
+        nx.write_gexf(G, root_dir+"/data/complete_graph.gexf")
+        with open(root_dir+"/data/countries_filter.json", "w") as f:
+            json.dump(dict(countries_grouping), f)
+        with open(root_dir+"/data/types_filter.json", "w") as f:
+            json.dump(dict(types_grouping), f)
+    # except Exception as e:
+        # print(e)
+        # nx.write_gexf(G, "./complete_graph.gexf")
     # nx.write_gexf(G, "../data/sussy.gexf")
-    with open("../data/countries_filter.json", "w") as f:
-        json.dump(dict(countries_grouping), f)
-    with open("../data/types_filter.json", "w") as f:
-        json.dump(dict(types_grouping), f)
     print(f"Nodes: {len(G.nodes)}")
     print(f"Edges: {len(G.edges)}")
     return G
 
 
-def filter_graphs(G, filter_type, timeframe, mode, group=None):
+def filter_graphs(filter_type, timeframe, mode, group=None):
     filters = []
-    # Retrieve filters from data
-    if "countries" in filter_type:
-        with open("../data/countries_filter.json", "r") as f:
-            countries_grouping = json.load(f)
-            filters.append(countries_grouping)
-    if "types" in filter_type:
-        with open("../data/types_filter.json", "r") as f:
-            types_grouping = json.load(f)
-            filters.append(types_grouping)
-    if "none" in filter_type:
-        filters.append({"all": list(G.nodes)})
-        group = "all"
+    if timeframe == "all":
+        G = nx.read_gexf(root_dir+f"/data/complete_graph.gexf")
+        # Retrieve filters from data
+        if "countries" in filter_type:
+            with open("../data/countries_filter.json", "r") as f:
+                countries_grouping = json.load(f)
+                filters.append(countries_grouping)
+        if "types" in filter_type:
+            with open("../data/types_filter.json", "r") as f:
+                types_grouping = json.load(f)
+                filters.append(types_grouping)
+    else:
+        G = nx.read_gexf(root_dir+f"/data/{timeframe}/complete_graph.gexf")
+        # Retrieve filters from data
+        if "countries" in filter_type:
+            with open(f"../data/{timeframe}/countries_filter.json", "r") as f:
+                countries_grouping = json.load(f)
+                filters.append(countries_grouping)
+        if "types" in filter_type:
+            with open(f"../data/{timeframe}/types_filter.json", "r") as f:
+                types_grouping = json.load(f)
+                filters.append(types_grouping)
+    # if "none" in filter_type: (deprecieated)
+    #     filters.append({"all": list(G.nodes)})
+    #     group = "all"
     # TODO: implement filter intersection of multiple filters later
     # if len(filters) > 1:
     filter = filters[0]
     print("filters loaded")
     # filtered_graph (FG)
     graph_nodes = G.nodes(data=True)
-    # print(graph_nodes)
+    # print(graph_nodes['0C0C9Y-E'])
+    # print(graph_nodes)    
     FG = nx.DiGraph()
     print("new graph created")
     if len(list(filter.keys())) == 1:
-        grouping_permutations = itertools.permutations(list(filter.values())[0], 2)
+        grouping_combinations = itertools.permutations(list(filter.values())[0], 2)
     else:
-        grouping_permutations = itertools.permutations(filter.keys(), 2)
+        grouping_combinations = itertools.permutations(filter.keys(), 2)
+    # APPARENTLY PRINTING A LIST OF GROUPING COMBINATIONS EXHAUSTS THEM?? idk
+    # print(list(grouping_combinations))
+    # print(len(filter.keys()))
+    # print(('AW', 'MX') in list(grouping_combinations))
+    # print(list(grouping_combinations), "grouping permutations created")
     links_to_transactions = {}
-    for permutation in grouping_permutations:
-        # print(permutation, "PERMUTATION")
+    for permutation in grouping_combinations:
         # print("YO")
+        # if G.has_edge(permutation[0], permutation[1]):
         links_to_transactions[(permutation[0], permutation[1])] = {}
+    del grouping_combinations
+    print("permutations added")
     # Analyze graph within a specific grouping
     if mode == "within":
         group_ids = filter[group]
         # Add nodes from just the group
-        filtered_group_nodes = []
-        for node in group_ids:
+        # filtered_group_nodes = []
+        # for node in group_ids:
             # filtered_group_nodes.append((node, graph_nodes[node]))
-            filtered_group_nodes.append(node)
+            # filtered_group_nodes.append(node)
         # print(filtered_group_nodes)
-        FG.add_nodes_from(filtered_group_nodes)
+        # FG.add_nodes_from(filtered_group_nodes)
+        FG.add_nodes_from(group_ids)
+        # del filtered_group_nodes
         # for node in group_ids:
             # del FG.nodes[node]["sent_transactions"]
             # del FG.nodes[node]["recieved_transactions"]
@@ -159,6 +209,8 @@ def filter_graphs(G, filter_type, timeframe, mode, group=None):
         # Add edges, but only if both nodes are in group
         i = 0
         for company_id in group_ids:
+            if not G.has_node(company_id):
+                continue
             for transaction_info in eval(graph_nodes[company_id]["sent_transactions"]).values():
                 supplier = transaction_info[0]
                 customer = transaction_info[1]
@@ -190,6 +242,7 @@ def filter_graphs(G, filter_type, timeframe, mode, group=None):
                                 # filtered_transaction_num += 1
                         # FG.add_edge(supplier, customer, history=filtered_history, transaction_num=len(filtered_history))
                         # FG.add_edge(supplier, customer, transaction_num=filtered_transaction_num)
+                del supplier, transaction_info, customer
         for link, transactions in links_to_transactions.items():
             if len(transactions) > 0:
                 # FG.add_edge(link[0], link[1], history=transactions, transaction_num=len(transactions))
@@ -203,8 +256,9 @@ def filter_graphs(G, filter_type, timeframe, mode, group=None):
             FG.add_node(grouping)
             # Create reverse lookup table from company id back to grouping
             for company_id in group_ids:
+                if '000Y55-E' == company_id:
+                    print("CAUGHT!")
                 reverse_filter[company_id] = grouping
-
         print("filtered nodes added")
         # Now go through edges
         i = 0
@@ -212,6 +266,10 @@ def filter_graphs(G, filter_type, timeframe, mode, group=None):
             i += 1
             print(f"\rCurrently on: {i}/{len(filter)} groups", end="")
             for company_id in group_ids:
+                if not G.has_node(company_id):
+                    continue
+                if company_id == '000Y55-E':
+                    print(reverse_filter[company_id])
                 for transaction_info in eval(graph_nodes[company_id]["sent_transactions"]).values():
                     # If the customer is not in the group, then we are good to go
                     other_grouping = reverse_filter[transaction_info[1]]
@@ -233,7 +291,7 @@ def filter_graphs(G, filter_type, timeframe, mode, group=None):
                                     # print("HTINGS ARE GETTING DROPPED", transaction_info)
                             else:
                             # if timeframe is a point in time, take all transactions occuring then
-                                if transaction_info[2] <= timeframe and transaction_info[3] >= timeframe:
+                                if transaction_info[2] <= int(timeframe) and transaction_info[3] >= int(timeframe):
                                     transactions_dict[len(transactions_dict)] = transaction_info
                                     # sent_dict[len(sent_dict)] = transaction_info
                                     # recieved_dict[len(recieved_dict)] = transaction_info
@@ -243,29 +301,46 @@ def filter_graphs(G, filter_type, timeframe, mode, group=None):
                 FG.add_edge(link[0], link[1], transaction_num=len(transactions))
     else:
         raise Exception("Incorrect mode!")
-    nx.write_gexf(FG, f"../data/{filter_type}_filtered_graph.gexf")
+    # try:
+    if timeframe:
+        nx.write_gexf(FG, root_dir+f"/data/{str(timeframe)}_{mode}_{filter_type}_filtered_graph.gexf")
+    else:
+        nx.write_gexf(FG, root_dir+f"/data/{str(timeframe)}_{mode}_{filter_type}_filtered_graph.gexf")
+    # except FileNotFoundError:
+        # nx.write_gexf(FG, root_dir+f"./{filter_type}_filtered_graph.gexf")
+    print("")
     print(f"Nodes: {len(FG.nodes)}")
     print(f"Edges: {len(FG.edges)}")
     
 
 if __name__ =="__main__":
-    if not os.path.isfile("../data/full_graph.gexf"):
-        _ = graph_generation()
-    G = nx.read_gexf("../data/full_graph.gexf")
-    # filter_graphs(G, "countries", [21900, 21960], "between")
-    print("full graph read!")
-    # while True:
-    #     text_input = input()
-    #     if text_input == "c":
-    #         break
-    #     else:
-    #         try:
-    #             exec(text_input)
-    #         except Exception as e:
-    #             print(e, "exception!")
-    # filter_graphs(G, "countries", 22000, "between")
-    # filter_graphs(G, "countries", 22100, "between")
-    # filter_graphs(G, "countries", 22200, "between")
-    # filter_graphs(G, filter_type="none", timeframe=22100, mode="within", group="all")
-    filter_graphs(G, filter_type="types", timeframe=22100, mode="between")
-    # filter_graphs(G, "countries", "all", "within", "JPN")
+    function = sys.argv[1]
+    if function == "generation":
+        if len(sys.argv) > 2:
+            timeframe = sys.argv[2] 
+            _ = graph_generation(timeframe)
+        else:
+            _ = graph_generation()
+    elif function == "filter":
+        filter = sys.argv[2]
+        timeframe = sys.argv[3]
+        mode = sys.argv[4]
+        if len(sys.argv) > 5:
+            group = sys.argv[5]
+            filter_graphs(filter, timeframe, mode, group)
+        else:
+            filter_graphs(filter, timeframe, mode)
+        # try:
+        # except FileNotFoundError:
+            # G = nx.read_gexf(root_dir+"/complete_graph.gexf")
+        # filter_graphs(G, "countries", [21900, 21960], "between")
+        print("full graph read!")
+        # filter_graphs(G, "countries", 22000, "between")
+        # filter_graphs(G, "countries", 22100, "between")
+        # filter_graphs(G, "types", "all", "between")
+        # filter_graphs(G, "countries", 22100, "between")
+        # filter_graphs(G, filter_type="none", timeframe=22100, mode="within", group="all")
+        # filter_graphs(G, filter_type="types", timeframe=22200, mode="between")
+        # filter_graphs(G, "countries", "all", "within", "JPN")
+    # if not os.path.isfile(root_dir+"/data/complete_graph.gexf"):
+        # _ = graph_generation()
