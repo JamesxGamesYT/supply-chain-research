@@ -10,30 +10,46 @@ root_dir = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 # with open(root_dir+"/data/complete_graph.gexf", "r") as f:
     # print("THIS WORKS")
 # from classes import *
-countries = {'PK', "nan", 'TW', 'ME', 'AU', 'BH', 'TO', 'BN', 'XK', 'MK', 'FI', 'FM', 'GE', 'SZ', 'KE', 'TJ', 'IT', 
-'CH', 'GT', 'DK', 'AD', 'UZ', 'MT', 'MH', 'CN', 'GL', 'TN', 'GN', 'JO', 'VI', 'AI', 'MU', 'BM', 'CF', 'AT', 'BD', 
-'CU', 'DZ', 'AS', 'PL', 'MQ', 'ID', 'MA', 'AZ', 'GM', 'MR', 'LB', 'CL', 'LV', 'VN', 'IS', 'KW', 'IQ', 'BW', 'SG', 
-'HR', 'BA', 'MV', 'BZ', 'UA', 'HT', 'CR', 'PR', 'BF', 'HN', 'AG', 'GY', 'NG', 'IL', 'GR', 'PS', 'AF', 'CZ', 'NP', 
-'LI', 'ER', 'GQ', 'BI', 'KR', '0', 'US', 'AM', 'EC', 'NC', 'AN', 'SA', 'PA', 'CV', 'IE', 'CI', 'BE', 'YE', 'LC', 
-'ES', 'LR', 'BT', 'NZ', 'MZ', 'SM', 'MM', 'SL', 'KI', 'RU', 'TH', 'VE', 'TT', 'DE', 'TM', 'CM', 'SE', 'JM', 'AW', 
-'BY', 'MW', 'MC', 'LU', 'BR', 'GA', 'EE', 'TV', 'RW', 'KG', 'BG', 'IR', 'KN', 'BS', 'PW', 'MG', 'DJ', 'UG', 'SC', 
-'PF', 'MX', 'SR', 'EG', 'GU', 'RS', 'WS', 'AR', 'AL', 'SS', 'SB', 'CA', 'NO', 'VA', 'IN', 'AX', 'KM', 'LY', 'MY', 
-'TZ', 'SO', 'ZW', 'BB', 'FR', 'ZA', 'KH', 'HK', 'TR', 'SY', 'CD', 'PT', 'SK', 'NE', 'NI', 'SN', 'CG', 'SV', 'PG', 
-'TD', 'BO', 'BJ', 'QA', 'GH', 'CO', 'KP', 'LT', 'ST', 'ML', 'JP', 'RE', 'TG', 'MO', 'LA', 'AE', 'ZM', 'KY', 'OM', 
-'RO', 'SI', 'VU', 'MD', 'FO', 'KZ', 'TL', 'VC', 'ET', 'CY', 'UY', 'GI', 'MN', 'SD', 'HU', 'VG', 'FJ', 'LK', 'AO', 
-'GB', 'DM', 'DO', 'PY', 'PE', 'PH', 'NL'}
+countries = ("nan", 'Bosnia and Herzegovina', 'Madagascar', 'Israel', 'Uzbekistan', 'Bahamas', 'Tunisia', 'Togo', 
+'Bermuda', 'Italy', 'Hong Kong', 'Morocco', 'Bolivia', 'Qatar', 'Solomon Islands', 'Puerto Rico', 'Ecuador', 
+'Mauritania', 'British Virgin Islands', 'Bahrain', 'Malta', 'Belgium', 'Iraq', 'Cyprus', 'Faroe Islands', 'Benin', 
+'Monaco', 'New Zealand', 'Jamaica', 'Denmark', 'Tanzania', 'Vietnam', 'Algeria', 'Chile', 'Serbia', 'Macau', 
+'United Arab Emirates', 'Panama', 'Dominica', 'Lithuania', 'Lebanon', 'China', 'South Sudan', 'Honduras', 
+'Czech Republic', 'Guinea', 'Netherlands Antilles', 'United Kingdom', 'Costa Rica', 'Barbados', 'Poland', 'Guyana', 
+'Austria', 'Haiti', 'Congo (Dem. Rep. of the)', 'Libya', 'Estonia', 'Antigua and Barbuda', 'Aruba', 'Iran', 'Angola',
+ 'Latvia', 'Portugal', 'Nepal', 'Liechtenstein', 'Kosovo', 'Mongolia', 'Nigeria', 'Peru', 'Norway', 'Niger', 'Kenya',
+  'Malawi', 'Cuba', 'Gambia', 'Mali', 'Saint Kitts and Nevis', 'Supranational', 'Aland Islands', 'Egypt', 'Taiwan',
+   'Anguilla', 'Greenland', 'Canada', 'Oman', 'Mexico', 'Moldova', 'Georgia', 'Greece', 'Pakistan', 
+   'Russian Federation', 'French Polynesia', 'United States', 'American Samoa', 'Finland', 'South Africa',
+    'Indonesia', 'Tajikistan', 'Bangladesh', 'Jordan', 'Kyrgyzstan', 'Gibraltar', 'Burundi', 'Spain', 'Brazil', 
+    'Swaziland', 'Djibouti', 'Namibia', 'Montenegro', 'Belarus', 'Cayman Islands', 'Botswana', 'Malaysia', 
+    'Nicaragua', 'Myanmar', 'Rwanda', 'Venezuela', 'Bulgaria', 'Marshall Islands', 'Australia', 'Macedonia', 
+    'Senegal', 'Gabon', 'Albania', 'Liberia', 'Iceland', 'Germany', 'Cape Verde', 'El Salvador', 'Netherlands', 
+    'Mozambique', 'Singapore', 'Sierra Leone', 'Belize', 'Croatia', 'Laos', 'Armenia', 'Timor-Leste', 'France',
+     'Cameroon', 'Sao Tome and Principe', 'Uganda', 'Turkey', 'Equatorial Guinea', 'Uruguay', 'Romania', 'India', 
+     'Guatemala', 'Ukraine', 'Azerbaijan', 'Ivory Coast', 'Paraguay', 'Argentina', 'Colombia', 'Saudi Arabia', 
+     'San Marino', 'Luxembourg', 'North Korea', 'Guam', 'Ethiopia', 'Ireland', 'Martinique', 'Papua New Guinea', 
+     'New Caledonia', 'Maldives', 'Philippines', 'Switzerland', 'Hungary', 'Dominican Republic', 'Vatican City', 
+     'Sri Lanka', 'Sudan', 'Brunei', 'Samoa', 'Trinidad and Tobago', 'Seychelles', 'Suriname', 'Palestine', 'Japan',
+      'South Korea', 'Kazakhstan', 'Mauritius', 'Ghana', 'Sweden', 'Yemen', 'Kuwait', 'Turkmenistan', 'Cambodia', 
+      'Tuvalu', 'Afghanistan', 'Kiribati', 'Bhutan', 'Thailand', 'Zimbabwe', 'Slovenia', 'Burkina Faso', 'Zambia', 
+      'Vanuatu', 'Slovakia', 'Fiji', 'Syria', 'U.S. Virgin Islands', 'La Reunion', 'Micronesia', 'Congo (Rep. of)',
+      'Somalia', 'Andorra', 'Tonga', 'Comoros', 'Palau', 'St Vincent & Grenadines', 'St. Lucia', 'Chad', 'Eritrea',
+      'Central African Republic')
 
-types = {"nan", 'CAC', 'SHP', 'OPD', 'PEF', 'ESP', 'PVT', 'PVF', 'TRU', 'SOV', 'PRO', 'COL', 'BRA', 'FAF', 'JVT', 
+types = ("nan", 'CAC', 'SHP', 'OPD', 'PEF', 'ESP', 'PVT', 'PVF', 'TRU', 'SOV', 'PRO', 'COL', 'BRA', 'FAF', 'JVT', 
 'SUB', 'HED', 'MUT', 'COR', 'UMB', 'PRT', 'UIT', 'MED', 'MUE', 'BAS', 'PUB', 'ABS', 'MUC', 'NPO', 'HOL', 'FNS', 
-'EXT', 'FND', 'VEN', 'GOV'}
+'EXT', 'FND', 'VEN', 'GOV')
 
 def graph_generation(timeframe=None):
     if type(timeframe) == list:
         timeframe = eval(timeframe)
     elif type(timeframe) == str:
+        date = pd.to_datetime(int(timeframe), origin='1960-01-01', unit='D')
+        print(f"Date: {date}")
         timeframe = int(timeframe)
     data = pd.read_csv("../data/globalchain.csv")
-    G = nx.Graph()
+    G = nx.DiGraph()
     # countries = set()
     # types = set()
     countries_grouping = {}
@@ -42,7 +58,6 @@ def graph_generation(timeframe=None):
         countries_grouping[country] = set()
     for company_type in types:
         types_grouping[company_type] = set()
-
     for i, row in data.iterrows():
         print(f"\rNodes counted: {i}", end="")
         # Add supplier company if it doesn't exist already. 
@@ -59,15 +74,18 @@ def graph_generation(timeframe=None):
                 if start >= timeframe or end <= timeframe:
                     continue
         if s_id not in G.nodes():
-            # countries.add(row["s_country"])
+            # countries.add(row["fs_s_country"])
+            if str(row["fs_s_country"]) not in countries_grouping:
+                countries_grouping[str(row["fs_s_country"])] = set()
+                print(str(row["fs_c_country"]))
             # types.add(row["s_entity_type"])
-            countries_grouping[str(row["s_country"])].add(s_id)
+            countries_grouping[str(row["fs_s_country"])].add(s_id)
             types_grouping[str(row["s_entity_type"])].add(s_id)
             # Add supplier node to graph. 
             G.add_node(s_id, id=s_id,
                 wrds_id= row["s_fsym_id"],
                 name= row["s_name"],
-                country= row["s_country"],
+                country= row["fs_s_country"],
                 company_type= row["s_entity_type"],
                 cusip=row["s_cusip"],
                 isin=row["s_isin"],
@@ -81,9 +99,12 @@ def graph_generation(timeframe=None):
         G.nodes[s_id]["sent_transactions"][len(G.nodes[s_id]["sent_transactions"])] = (transaction_info)
         # Add customer company if it doesn't exist already. 
         if c_id not in G.nodes():
-            # countries.add(row["c_country"])
+            # countries.add(row["fs_c_country"])
+            if str(row["fs_c_country"]) not in countries_grouping:
+                countries_grouping[str(row["fs_c_country"])] = set()
+                print(str(row["fs_c_country"]))
             # types.add(row["c_entity_type"])
-            countries_grouping[str(row["c_country"])].add(c_id)
+            countries_grouping[str(row["fs_c_country"])].add(c_id)
             # print(row["c_entity_type"])
             # print(type(row["c_entity_type"]), "type")
             types_grouping[str(row["c_entity_type"])].add(c_id)
@@ -91,7 +112,7 @@ def graph_generation(timeframe=None):
             G.add_node(c_id, id= c_id,
                 wrds_id= row["c_fsym_id"],
                 name= row["c_name"],
-                country= row["c_country"],
+                country= row["fs_c_country"],
                 company_type= row["c_entity_type"],
                 cusip=row["c_cusip"],
                 isin=row["c_isin"],
@@ -107,7 +128,7 @@ def graph_generation(timeframe=None):
             G.add_edge(s_id, c_id, supplier=s_id, customer=c_id, history={0 : transaction_info}, transaction_num = 1)  
         # G[s_id][c_id]["history"][len(G[s_id][c_id]["history"])] = transaction_info
         G[s_id][c_id]["transaction_num"] = len(G[s_id][c_id]["history"])
-        
+
     for country in countries_grouping:
         countries_grouping[country] = list(countries_grouping[country])
     for company_type in types_grouping:
@@ -115,10 +136,12 @@ def graph_generation(timeframe=None):
     # try:
     # nx.write_gexf(G, root_dir+"/data/sussy.gexf")
     if timeframe:
-        nx.write_gexf(G, root_dir+f"/data/{str(timeframe)}/complete_graph.gexf")
-        with open(root_dir+f"/data/{str(timeframe)}/countries_filter.json", "w") as f:
+        if not os.path.exists(root_dir+f"/data/{str(timeframe)}/"):
+            os.mkdir(root_dir+f"/data/{str(timeframe)}/")
+        nx.write_gexf(G, root_dir+f"/data/{str(timeframe)}/{str(timeframe)}_complete_graph.gexf")
+        with open(root_dir+f"/data/{str(timeframe)}/{str(timeframe)}_countries_filter.json", "w") as f:
             json.dump(dict(countries_grouping), f)
-        with open(root_dir+f"/data/{str(timeframe)}/types_filter.json", "w") as f:
+        with open(root_dir+f"/data/{str(timeframe)}/{str(timeframe)}_types_filter.json", "w") as f:
             json.dump(dict(types_grouping), f)
     else:
         nx.write_gexf(G, root_dir+"/data/complete_graph.gexf")
@@ -130,12 +153,14 @@ def graph_generation(timeframe=None):
         # print(e)
         # nx.write_gexf(G, "./complete_graph.gexf")
     # nx.write_gexf(G, "../data/sussy.gexf")
+    print("")
     print(f"Nodes: {len(G.nodes)}")
     print(f"Edges: {len(G.edges)}")
+    # print(countries)
     return G
 
 
-def filter_graphs(filter_type, timeframe, mode, group=None):
+def filter_graph(filter_type, timeframe, mode, group=None):
     filters = []
     if timeframe == "all":
         G = nx.read_gexf(root_dir+f"/data/complete_graph.gexf")
@@ -149,14 +174,16 @@ def filter_graphs(filter_type, timeframe, mode, group=None):
                 types_grouping = json.load(f)
                 filters.append(types_grouping)
     else:
-        G = nx.read_gexf(root_dir+f"/data/{timeframe}/complete_graph.gexf")
+        date = pd.to_datetime(int(timeframe), origin='1960-01-01', unit='D')
+        print(f"Date: {date}")
+        G = nx.read_gexf(root_dir+f"/data/{timeframe}/{str(timeframe)}_complete_graph.gexf")
         # Retrieve filters from data
         if "countries" in filter_type:
-            with open(f"../data/{timeframe}/countries_filter.json", "r") as f:
+            with open(f"../data/{timeframe}/{str(timeframe)}_countries_filter.json", "r") as f:
                 countries_grouping = json.load(f)
                 filters.append(countries_grouping)
         if "types" in filter_type:
-            with open(f"../data/{timeframe}/types_filter.json", "r") as f:
+            with open(f"../data/{timeframe}/{str(timeframe)}_types_filter.json", "r") as f:
                 types_grouping = json.load(f)
                 filters.append(types_grouping)
     # if "none" in filter_type: (deprecieated)
@@ -256,8 +283,6 @@ def filter_graphs(filter_type, timeframe, mode, group=None):
             FG.add_node(grouping)
             # Create reverse lookup table from company id back to grouping
             for company_id in group_ids:
-                if '000Y55-E' == company_id:
-                    print("CAUGHT!")
                 reverse_filter[company_id] = grouping
         print("filtered nodes added")
         # Now go through edges
@@ -268,8 +293,6 @@ def filter_graphs(filter_type, timeframe, mode, group=None):
             for company_id in group_ids:
                 if not G.has_node(company_id):
                     continue
-                if company_id == '000Y55-E':
-                    print(reverse_filter[company_id])
                 for transaction_info in eval(graph_nodes[company_id]["sent_transactions"]).values():
                     # If the customer is not in the group, then we are good to go
                     other_grouping = reverse_filter[transaction_info[1]]
@@ -303,9 +326,9 @@ def filter_graphs(filter_type, timeframe, mode, group=None):
         raise Exception("Incorrect mode!")
     # try:
     if timeframe:
-        nx.write_gexf(FG, root_dir+f"/data/{str(timeframe)}_{mode}_{filter_type}_filtered_graph.gexf")
+        nx.write_gexf(FG, root_dir+f"/data/{str(timeframe)}/{str(timeframe)}_{mode}_{filter_type}_filtered_graph.gexf")
     else:
-        nx.write_gexf(FG, root_dir+f"/data/{str(timeframe)}_{mode}_{filter_type}_filtered_graph.gexf")
+        nx.write_gexf(FG, root_dir+f"/data/{mode}_{filter_type}_filtered_graph.gexf")
     # except FileNotFoundError:
         # nx.write_gexf(FG, root_dir+f"./{filter_type}_filtered_graph.gexf")
     print("")
@@ -313,9 +336,83 @@ def filter_graphs(filter_type, timeframe, mode, group=None):
     print(f"Edges: {len(FG.edges)}")
     
 
+def analyze_graph(timeframe, filter=None):
+    if timeframe == "all":
+        G = nx.read_gexf(root_dir+f"/data/complete_graph.gexf")
+        if "countries" == filter:
+            with open("../data/countries_filter.json", "r") as f:
+                countries_grouping = json.load(f)
+                filter = countries_grouping
+        elif "types" == filter:
+            with open("../data/types_filter.json", "r") as f:
+                types_grouping = json.load(f)
+                filter = types_grouping
+    else:
+        date = pd.to_datetime(int(timeframe), origin='1960-01-01', unit='D')
+        print(f"Date: {date}")
+        G = nx.read_gexf(root_dir+f"/data/{timeframe}/{timeframe}_complete_graph.gexf")
+        if "countries" == filter:
+            with open(f"../data/{timeframe}/{timeframe}_countries_filter.json", "r") as f:
+                countries_grouping = json.load(f)
+                filter = countries_grouping
+        elif "types" == filter:
+            with open(f"../data/{timeframe}/{timeframe}_types_filter.json", "r") as f:
+                types_grouping = json.load(f)
+                filter = types_grouping
+    if filter:
+        print("OK!")
+        top_groups = sorted(filter.items(), key=lambda x:len(x[1]))
+        for group_tuple in top_groups:
+            group = group_tuple[0]
+            grouping = filter[group]
+            if len(grouping) == 0:
+                continue
+            node_degrees = {}
+            degree_sum = 0
+            in_degree = 0
+            out_degree = 0
+            node_total = len(grouping)
+            for i, node in enumerate(grouping):
+                print(f"\rNode {i}/{node_total}", end="")
+                degree = len(list(G.neighbors(node)))
+                node_degrees[G.nodes[node]["name"]]  = degree
+                degree_sum += degree
+                in_degree += G.in_degree(node)
+                out_degree += G.out_degree(node)
+            print("")
+            top_degrees = sorted(node_degrees.items(), key=lambda x:x[1], reverse=True)
+            print(f"{group} Top companies: {top_degrees[:5]}")
+            print(f"{group} Average degree: {degree_sum/node_total}")
+            print(f"{group} Number of companies: {node_total}")
+            print(f"Export percentage: {round(out_degree/(in_degree+out_degree), 3)}")
+    else:
+        node_degrees = {}
+        degree_sum = 0
+        node_total = len(G.nodes)
+        in_degree = 0
+        out_degree = 0
+        for i, node in enumerate(G.nodes):
+            # print(node)
+            print(f"\rNode {i}/{node_total}", end="")
+            degree = len(list(G.neighbors(node)))
+            # print(list(G.neighbors(node)))
+            # print(G.degree(node))
+            # print(degree)
+            node_degrees[G.nodes[node]["name"]]  = degree
+            # degree_sum += degree
+            degree_sum += degree
+            in_degree += G.in_degree(node)
+            out_degree += G.out_degree(node)
+        print("")
+        top_degrees = sorted(node_degrees.items(), key=lambda x:x[1], reverse=True)
+        print(f"Top companies: {top_degrees[:30]}")
+        print(f"Average degree: {degree_sum/node_total}")
+        print(f"Export percentage: {round(out_degree/(in_degree+out_degree), 3)}")
+        print(out_degree, in_degree)
+
 if __name__ =="__main__":
     function = sys.argv[1]
-    if function == "generation":
+    if function == "generate":
         if len(sys.argv) > 2:
             timeframe = sys.argv[2] 
             _ = graph_generation(timeframe)
@@ -327,20 +424,27 @@ if __name__ =="__main__":
         mode = sys.argv[4]
         if len(sys.argv) > 5:
             group = sys.argv[5]
-            filter_graphs(filter, timeframe, mode, group)
+            filter_graph(filter, timeframe, mode, group)
         else:
-            filter_graphs(filter, timeframe, mode)
+            filter_graph(filter, timeframe, mode)
+    elif function == "analyze":
+        timeframe = sys.argv[2]
+        if len(sys.argv) > 3:
+            filter = sys.argv[3]
+            analyze_graph(timeframe, filter)
+        else:
+            analyze_graph(timeframe)
         # try:
         # except FileNotFoundError:
             # G = nx.read_gexf(root_dir+"/complete_graph.gexf")
-        # filter_graphs(G, "countries", [21900, 21960], "between")
+        # filter_graph(G, "countries", [21900, 21960], "between")
         print("full graph read!")
-        # filter_graphs(G, "countries", 22000, "between")
-        # filter_graphs(G, "countries", 22100, "between")
-        # filter_graphs(G, "types", "all", "between")
-        # filter_graphs(G, "countries", 22100, "between")
-        # filter_graphs(G, filter_type="none", timeframe=22100, mode="within", group="all")
-        # filter_graphs(G, filter_type="types", timeframe=22200, mode="between")
-        # filter_graphs(G, "countries", "all", "within", "JPN")
+        # filter_graph(G, "countries", 22000, "between")
+        # filter_graph(G, "countries", 22100, "between")
+        # filter_graph(G, "types", "all", "between")
+        # filter_graph(G, "countries", 22100, "between")
+        # filter_graph(G, filter_type="none", timeframe=22100, mode="within", group="all")
+        # filter_graph(G, filter_type="types", timeframe=22200, mode="between")
+        # filter_graph(G, "countries", "all", "within", "JPN")
     # if not os.path.isfile(root_dir+"/data/complete_graph.gexf"):
         # _ = graph_generation()
