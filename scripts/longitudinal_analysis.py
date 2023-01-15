@@ -16,11 +16,14 @@ def longitudinal_extraction(crisis, grouping):
     if crisis == "covid":
         snapshots = [21870, 21930, 21960, 22000, 22100, 22200, 22300, 22370]
         # snapshots = [21870, 21930]
-    degree_data = {}    
-    total_average_degrees = {}
+    # Keys are timeframes, values are a dictionary of group and its global efficiency
+    efficiency_data = {}    
+    # Keys are timeframes, values are global efficiency
+    timeframe_efficiency_data = {}
     previous_timeframe_connections = {}
     baseline_timeframe_connections = {}
     final_timeframe_connections = {}
+    # A dictionary with keys being companies and values of dictionaries of lost companies and their timestamp
     connections_lost = defaultdict(dict)
     connections_gained = defaultdict(dict)
     for i, timeframe in enumerate(snapshots):
@@ -41,7 +44,7 @@ def longitudinal_extraction(crisis, grouping):
         for group, company_list in filter.items():
             if len(company_list) == 0:
                 continue
-            average_degree = 0
+            # average_degree = 0
             for company in company_list:
                 neighbors = set(G.neighbors(company))
                 if company in previous_timeframe_connections:
@@ -66,13 +69,15 @@ def longitudinal_extraction(crisis, grouping):
                 final_timeframe_connections[company] =  neighbors
                 previous_timeframe_connections[company] = neighbors
                 degree = len(neighbors)
-                average_degree += degree
-                total_average_degree += degree
-            snapshot_data[group] = average_degree/len(company_list)
-        degree_data[timeframe] = snapshot_data
-        total_average_degrees[timeframe] = total_average_degree/len(G.nodes)
+                # average_degree += degree
+                # total_average_degree += degree
+            # snapshot_data[group] = average_degree/len(company_list)
+            snapshot_data[group] = nx.global_efficiency(G.subgraph(company_list))
+        efficiency_data[timeframe] = snapshot_data
+        # timeframe_efficiency_data[timeframe] = total_average_degree/len(G.nodes)
+        timeframe_efficiency_data[timeframe] = nx.global_efficiency(G)
     
-    # Creates and plots impact data
+    # Creates and plots impact/efficiency data
     impact_data = {}
     fig = plt.figure()
     plot = fig.add_subplot(111)
@@ -81,14 +86,14 @@ def longitudinal_extraction(crisis, grouping):
         keep_group = True
         x_coords = []
         y_coords = []
-        # Removes a group if it's not in every timeframe
+        # Removes a group if it's not in every timeframe, applies especially to companies
         for timeframe in snapshots:
-            if group not in degree_data[timeframe]:
+            if group not in efficiency_data[timeframe]:
                 keep_group = False
                 groups_to_remove.add(group)
                 continue
             x_coords.append(timeframe)
-            y_coords.append(degree_data[timeframe][group])
+            y_coords.append(efficiency_data[timeframe][group])
         if keep_group:
             baseline = y_coords[0]
             impact = max(baseline - min(y_coords), 0)
@@ -101,7 +106,7 @@ def longitudinal_extraction(crisis, grouping):
             data.append(total_impact)
             impact_data[group] = data
             plot.plot(x_coords, y_coords, label=group)
-    plot.plot(snapshots, list(total_average_degrees.values()), linewidth="5", markersize="6")
+    plot.plot(snapshots, list(timeframe_efficiency_data.values()), linewidth="5", markersize="6")
 
     # This keeps the impact data following the same criteria as the connections data
     for group in groups_to_remove:
@@ -109,14 +114,19 @@ def longitudinal_extraction(crisis, grouping):
 
     # Counts the makeup of connections over time, creating connections_data file. 
     connections_data = {}
-    joined_connections = {}
+    companies_connections_change = {}
     total_degree_difference = 0
+    total_sum = 0
+    total_reestablished_links = 0
+    total_unestablished_links = 0
+    total_lost_links = 0
+    total_gained_links = 0
     for group, company_list in filter.items():
-        total_sum = 0
-        total_reestablished_links = 0
-        total_unestablished_links = 0
-        total_lost_links = 0
-        total_gained_links = 0
+        group_sum = 0
+        group_reestablished_links = 0
+        group_unestablished_links = 0
+        group_lost_links = 0
+        group_gained_links = 0
         for company in company_list:
             # Creates connections_change file by combining raw timestamps and company changes
             common_links = set(connections_lost[company].keys()).intersection(set(connections_gained[company].keys()))
@@ -124,7 +134,7 @@ def longitudinal_extraction(crisis, grouping):
             unestablished_links = set()
             lost_links = set(connections_lost[company]).difference(common_links)
             gained_links = set(connections_gained[company]).difference(common_links)
-            joined_connections[company] = {"lost":{}, "gained":{}, "unestablished":{}, "reestablished": {}}
+            companies_connections_change[company] = {"lost":{}, "gained":{}, "unestablished":{}, "reestablished": {}}
             for company_link in common_links:
                 if company_link in baseline_timeframe_connections[company]:
                     if company_link in final_timeframe_connections[company]:
@@ -147,37 +157,51 @@ def longitudinal_extraction(crisis, grouping):
                 # else:
                 #     print("MAJOR DATA FUCKUP!!", company, company_link)
             for link in lost_links:
-                joined_connections[company]["lost"][link] = connections_lost[company][link]
+                companies_connections_change[company]["lost"][link] = connections_lost[company][link]
             for link in gained_links:
-                joined_connections[company]["gained"][link] = connections_gained[company][link]
+                companies_connections_change[company]["gained"][link] = connections_gained[company][link]
             for link in unestablished_links:
-                joined_connections[company]["unestablished"][link] = connections_lost[company][link]
+                companies_connections_change[company]["unestablished"][link] = connections_lost[company][link]
             for link in reestablished_links:
-                joined_connections[company]["reestablished"][link] = connections_gained[company][link]
+                companies_connections_change[company]["reestablished"][link] = connections_gained[company][link]
             # reestablished_links = len(connections_lost[company].intersection(connections_gained[company]))
-            total_reestablished_links += len(reestablished_links)
-            total_unestablished_links += len(unestablished_links)
-            total_lost_links += len(lost_links)
-            total_gained_links += len(gained_links)
-            total_sum += len(unestablished_links) + len(reestablished_links) + len(lost_links) + len(gained_links)
+            group_reestablished_links += len(reestablished_links)
+            group_unestablished_links += len(unestablished_links)
+            group_lost_links += len(lost_links)
+            group_gained_links += len(gained_links)
+            group_sum += len(unestablished_links) + len(reestablished_links) + len(lost_links) + len(gained_links)
             # print(connections_lost[company], connections_gained[company], connections_lost[company].intersection(connections_gained[company]), company)
-        if total_sum == 0:
+        if group_sum == 0:
             continue
-        degree_difference = total_gained_links-total_lost_links
+        total_reestablished_links += group_reestablished_links
+        total_unestablished_links += group_unestablished_links
+        total_lost_links += group_lost_links
+        total_gained_links += group_gained_links
+        total_sum += group_sum
+        degree_difference = group_gained_links-group_lost_links
         total_degree_difference += degree_difference
-        connections_data[group] = {"unestablished": total_unestablished_links/total_sum, "reestablished" : total_reestablished_links/total_sum, "lost" : total_lost_links/total_sum, "gained" : total_gained_links/total_sum, "degree_difference":degree_difference}
+        connections_data[group] = {"unestablished": group_unestablished_links/group_sum, "reestablished" : group_reestablished_links/group_sum, "lost" : group_lost_links/group_sum, "gained" : group_gained_links/group_sum, "degree_difference":degree_difference}
+    
+    # Regardless of grouping, show the change in connections by company
     with open(f"../data/{crisis}_companies_connections_change.json", "w") as f:
-        json.dump(joined_connections, f, indent=4)
+        json.dump(companies_connections_change, f, indent=4)
+    # Using a grouping filter, aggregate/average the makeup of connection changes in group summary data
     with open(f"../data/{crisis}_{grouping}_connections_data.json", "w") as f:
         json.dump(connections_data, f, indent=4)
+    # Calculate impacts/now efficiencies by group
     with open(f"../data/{crisis}_{grouping}_impact_data.json", "w") as f:
         json.dump(impact_data, f, indent=4)
 
-    print(total_degree_difference)
+    print(f"Total degree sum (I think): {total_sum}")
+    print(f"Total lost: {total_lost_links}")
+    print(f"Total gained: {total_gained_links}")
+    print(f"Total unnestablished: {total_unestablished_links}")
+    print(f"Total reestablished: {total_reestablished_links}")
+    print(f"Total degree difference: {total_degree_difference}")
     # fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)           
     fig.show()
-    if len(filter) < 10:
-        fig.legend(loc='upper left')
+    # if len(filter) < 25:
+    fig.legend(loc='upper left')
     plt.savefig(f"../graphs/{crisis}_crisis_analysis_by_{grouping}.png")
 
 def longitudinal_analysis(crisis, grouping):
@@ -208,14 +232,15 @@ def longitudinal_analysis(crisis, grouping):
     plt.ylabel("Total impact")
     plt.savefig(f"../graphs/{crisis}_{grouping}_absolute_total_impact.png")
     fig.clear()
-    plt.hist(absolute_impacts)
+    plt.hist(absolute_impacts, bins=40)
     plt.savefig(f"../graphs/{crisis}_{grouping}_absolute_impact_histogram.png")
     fig.clear()
-    plt.hist(total_impacts)
+    plt.hist(total_impacts,  bins=40)
     plt.savefig(f"../graphs/{crisis}_{grouping}_total_impact_histogram.png")
     fig.clear()
 
     # TODO: MAYBE SPLIT THIS BY GROUPING?
+    # Analyze change in the different types of connection changes over time
     lost_histogram = {timeframe : 0 for timeframe in snapshots}
     gained_histogram = {timeframe : 0 for timeframe in snapshots}
     unestablished_histogram = {timeframe : 0 for timeframe in snapshots}
@@ -235,5 +260,5 @@ def longitudinal_analysis(crisis, grouping):
 if __name__ == "__main__":
     crisis = sys.argv[1]
     grouping = sys.argv[2]
-    # longitudinal_extraction(crisis, grouping)
-    longitudinal_analysis(crisis, grouping)
+    longitudinal_extraction(crisis, grouping)
+    # longitudinal_analysis(crisis, grouping)
