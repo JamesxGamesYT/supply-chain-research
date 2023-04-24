@@ -6,6 +6,7 @@ import sys
 import json
 import itertools
 import pathlib
+import matplotlib.pyplot as plt
 root_dir = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 # with open(root_dir+"/data/complete_graph.gexf", "r") as f:
     # print("THIS WORKS")
@@ -48,7 +49,8 @@ def graph_generation(timeframe=None):
         date = pd.to_datetime(int(timeframe), origin='1960-01-01', unit='D')
         print(f"Date: {date}")
         timeframe = int(timeframe)
-    data = pd.read_csv("../data/globalchain.csv")
+    # data = pd.read_csv("../data/globalchain.csv")
+    data = pd.read_csv("data/globalchain.csv")
     G = nx.DiGraph()
     # countries = set()
     # types = set()
@@ -340,11 +342,11 @@ def analyze_graph(timeframe, filter=None):
     if timeframe == "all":
         G = nx.read_gexf(root_dir+f"/data/complete_graph.gexf")
         if "countries" == filter:
-            with open("../data/countries_filter.json", "r") as f:
+            with open(root_dir+"/data/countries_filter.json", "r") as f:
                 countries_grouping = json.load(f)
                 filter = countries_grouping
         elif "types" == filter:
-            with open("../data/types_filter.json", "r") as f:
+            with open(root_dir+"/data/types_filter.json", "r") as f:
                 types_grouping = json.load(f)
                 filter = types_grouping
     else:
@@ -352,11 +354,11 @@ def analyze_graph(timeframe, filter=None):
         print(f"Date: {date}")
         G = nx.read_gexf(root_dir+f"/data/{timeframe}/{timeframe}_complete_graph.gexf")
         if "countries" == filter:
-            with open(f"../data/{timeframe}/{timeframe}_countries_filter.json", "r") as f:
+            with open(root_dir+f"/data/{timeframe}/{timeframe}_countries_filter.json", "r") as f:
                 countries_grouping = json.load(f)
                 filter = countries_grouping
         elif "types" == filter:
-            with open(f"../data/{timeframe}/{timeframe}_types_filter.json", "r") as f:
+            with open(root_dir+f"/data/{timeframe}/{timeframe}_types_filter.json", "r") as f:
                 types_grouping = json.load(f)
                 filter = types_grouping
     if filter:
@@ -409,6 +411,8 @@ def analyze_graph(timeframe, filter=None):
         print(f"Average degree: {degree_sum/node_total}")
         print(f"Export percentage: {round(out_degree/(in_degree+out_degree), 3)}")
         print(out_degree, in_degree)
+    plt.hist(node_degrees.values(), bins=50)
+    plt.savefig("degree_plot.png")
 
 if __name__ =="__main__":
     function = sys.argv[1]
@@ -438,7 +442,7 @@ if __name__ =="__main__":
         # except FileNotFoundError:
             # G = nx.read_gexf(root_dir+"/complete_graph.gexf")
         # filter_graph(G, "countries", [21900, 21960], "between")
-        print("full graph read!")
+        # print("full graph read!")
         # filter_graph(G, "countries", 22000, "between")
         # filter_graph(G, "countries", 22100, "between")
         # filter_graph(G, "types", "all", "between")

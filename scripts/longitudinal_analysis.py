@@ -11,24 +11,32 @@ def longitudinal_extraction(crisis, grouping):
     Extract longitudinal connection change data for the crisis and grouping/filter in question. 
     """
     if crisis == "2008":
-        snapshots = [17540, 17620, 17720, 17820, 18020, 18120, 18220, 18320, 18420, 18520, 18620, 18720, 18820, 18920, 19020, 19120, 19220, 19320, 19420, 19520]
-        # snapshots = [17540, 17620]
+        snapshots = [17714, 17820, 18020, 18079, 18120, 18220, 18320, 18420, 18520, 18620, 18720, 18809, 18820, 18920, 19020, 19120, 19220, 19320, 19420, 19520]
+        # snapshots = [17540, 19520]
     if crisis == "covid":
         snapshots = [21870, 21930, 21960, 22000, 22100, 22200, 22300, 22370]
         # snapshots = [21870, 21930]
     # Keys are timeframes, values are a dictionary of group and its global efficiency
-    efficiency_data = {}    
+    group_efficiency_data = {}    
     # Keys are timeframes, values are global efficiency
-    timeframe_efficiency_data = {}
+    global_metric_data = {}
     previous_timeframe_connections = {}
     baseline_timeframe_connections = {}
     final_timeframe_connections = {}
     # A dictionary with keys being companies and values of dictionaries of lost companies and their timestamp
     connections_lost = defaultdict(dict)
     connections_gained = defaultdict(dict)
+    connections_reestablished = defaultdict(dict)
+    lost_connections_count = []
+    gained_connections_count = []
+    reestablished_connections_count = []
+    total_connections_count = []
+    total_nodes_count = []
     for i, timeframe in enumerate(snapshots):
-        print(f"\r {i}/{len(snapshots)} snapshots")
+        print(f"\r {i}/{len(snapshots)} snapshots, timeframe: {timeframe}")
         G = nx.read_gexf(root_dir+f"/data/{timeframe}/{timeframe}_complete_graph.gexf")
+        total_nodes_count.append(len(G.nodes))
+        total_connections_count.append(len(G.edges))
         if "countries" == grouping:
             with open(f"../data/{timeframe}/{timeframe}_countries_filter.json", "r") as f:
                 filter = json.load(f)
@@ -36,9 +44,12 @@ def longitudinal_extraction(crisis, grouping):
             with open(f"../data/{timeframe}/{timeframe}_types_filter.json", "r") as f:
                 filter = json.load(f)
         elif "companies" == grouping:
+            if i == 0:
+                all_filter = {}
             filter = {}
             for node in G.nodes:
                 filter[str(node)] = [node]
+                all_filter[str(node)] = [node]
         snapshot_data = {}
         total_average_degree = 0
         for group, company_list in filter.items():
@@ -60,6 +71,8 @@ def longitudinal_extraction(crisis, grouping):
                     # connections_lost[company].update(lost)
                     for gained_company in gained:
                         connections_gained[company][gained_company] = timeframe
+                        if gained_company in connections_lost[company]:
+                            connections_reestablished[company][lost_company] = timeframe
                     # connections_gained[company].update(gained)
                 # The baseline is set to whenever the company first enters the timeframes
                 if company not in previous_timeframe_connections:
@@ -68,63 +81,60 @@ def longitudinal_extraction(crisis, grouping):
                 # This will only stop updating whenever the company leaves the timeframe
                 final_timeframe_connections[company] =  neighbors
                 previous_timeframe_connections[company] = neighbors
-                degree = len(neighbors)
+                # degree = len(neighbors)
                 # average_degree += degree
                 # total_average_degree += degree
             # snapshot_data[group] = average_degree/len(company_list)
-            snapshot_data[group] = nx.global_efficiency(G.subgraph(company_list))
-        efficiency_data[timeframe] = snapshot_data
-        # timeframe_efficiency_data[timeframe] = total_average_degree/len(G.nodes)
-        timeframe_efficiency_data[timeframe] = nx.global_efficiency(G)
-    
-    # Creates and plots impact/efficiency data
-    impact_data = {}
-    fig = plt.figure()
-    plot = fig.add_subplot(111)
-    groups_to_remove = set()
-    for group in filter:
-        keep_group = True
-        x_coords = []
-        y_coords = []
-        # Removes a group if it's not in every timeframe, applies especially to companies
-        for timeframe in snapshots:
-            if group not in efficiency_data[timeframe]:
-                keep_group = False
-                groups_to_remove.add(group)
-                continue
-            x_coords.append(timeframe)
-            y_coords.append(efficiency_data[timeframe][group])
-        if keep_group:
-            baseline = y_coords[0]
-            impact = max(baseline - min(y_coords), 0)
-            total_impact = 0
-            for coord in y_coords:
-                total_impact += max(baseline - coord, 0)
-            data = []
-            data.append({x_coords[i]: y_coords[i] for i in range(len(x_coords))})
-            data.append(impact)
-            data.append(total_impact)
-            impact_data[group] = data
-            plot.plot(x_coords, y_coords, label=group)
-    plot.plot(snapshots, list(timeframe_efficiency_data.values()), linewidth="5", markersize="6")
-
+            # if grouping == "companies":
+            #     snapshot_data[group] = nx.local_efficiency(G.subgraph(G.neighbors(company_list[0])).to_undirected())
+            #     # snapshot_data[group] = nx.local_efficiency(G.subgraph(G.to_undirected().neighbors(company)).to_undirected())
+            # # Efficiency data organized by group
+            # else:
+            #     snapshot_data[group] = nx.local_efficiency(G.subgraph(company_list).to_undirected())
+        gained_connections_count.append(sum([len(connections_gained[company]) for company in connections_gained.keys()]))
+        lost_connections_count.append(sum([len(connections_gained[company]) for company in connections_gained.keys()]))
+        reestablished_connections_count.append(sum([len(connections_gained[company]) for company in connections_gained.keys()]))
+        # group_efficiency_data[timeframe] = snapshot_data
+        # global_metric_data[timeframe] = total_average_degree/len(G.nodes)
+        global_metric_data[timeframe] = {"efficiency": nx.local_efficiency(G.to_undirected()), "clustering": nx.clustering(G)}
+    plt.plot(snapshots, lost_connections_count, label="removed edges")
+    plt.plot(snapshots, gained_connections_count, label="added edges")
+    plt.plot(snapshots, reestablished_connections_count, label="reestablished edges")
+    plt.plot(snapshots, total_connections_count, label="total edges")
+    plt.plot(snapshots, total_nodes_count, label="total_nodes")
+    plt.legend()
+    plt.savefig("real_data.png")
+    plt.clf()
+    # Removes a group if it's not in every timeframe, applies especially to companies
+    # groups_to_remove = set()
+    # for group in filter:
+    #     keep_group = True
+    #     for timeframe in snapshots:
+    #         if group not in group_efficiency_data[timeframe]:
+    #             # keep_group = False
+    #             groups_to_remove.add(group)
+    #             continue
     # This keeps the impact data following the same criteria as the connections data
-    for group in groups_to_remove:
-        del filter[group]
+    # for group in groups_to_remove:
+    #     del filter[group]
 
     # Counts the makeup of connections over time, creating connections_data file. 
     connections_data = {}
     companies_connections_change = {}
     total_degree_difference = 0
     total_sum = 0
-    total_reestablished_links = 0
-    total_unestablished_links = 0
+    # total_reestablished_links = 0
+    # total_unestablished_links = 0
     total_lost_links = 0
     total_gained_links = 0
-    for group, company_list in filter.items():
+    for group, company_list in all_filter.items():
+        for company in company_list:
+            # companies_connections_change[company] = {"lost":{}, "gained":{}, "unestablished":{}, "reestablished": {}}
+            companies_connections_change[company] = {"lost":{}, "gained":{}, 'incoming_lost':{}, 'incoming_gained':{}, "reestablished":{}}
+    for group, company_list in all_filter.items():
         group_sum = 0
         group_reestablished_links = 0
-        group_unestablished_links = 0
+        # group_unestablished_links = 0
         group_lost_links = 0
         group_gained_links = 0
         for company in company_list:
@@ -134,22 +144,21 @@ def longitudinal_extraction(crisis, grouping):
             unestablished_links = set()
             lost_links = set(connections_lost[company]).difference(common_links)
             gained_links = set(connections_gained[company]).difference(common_links)
-            companies_connections_change[company] = {"lost":{}, "gained":{}, "unestablished":{}, "reestablished": {}}
             for company_link in common_links:
-                if company_link in baseline_timeframe_connections[company]:
-                    if company_link in final_timeframe_connections[company]:
-                        # It was there at beginning and end, so it must've been lost first and then regained
-                        reestablished_links.add(company_link)
-                    else:
-                        # It was just lost, even if it disappeared, reappeared, and then disappeared again
-                        lost_links.add(company_link)
+                # if company_link in baseline_timeframe_connections[company]:
+                if company_link in final_timeframe_connections[company]:
+                    # It was there at beginning and end, so it must've been lost first and then regained
+                    reestablished_links.add(company_link)
                 else:
-                    if company_link in final_timeframe_connections[company]:
-                        # It was just gained, even if it appeared, disappeared, then appeared again
-                        gained_links.add(company_link)
-                    else:
-                        # It was not there at beginning and end, so it must've been gained first and then lost
-                        unestablished_links.add(company_link)
+                    # It was just lost, even if it disappeared, reappeared, and then disappeared again
+                    lost_links.add(company_link)
+                    # else:
+                    #     if company_link in final_timeframe_connections[company]:
+                    #         # It was just gained, even if it appeared, disappeared, then appeared again
+                    #         gained_links.add(company_link)
+                    #     else:
+                    #         # It was not there at beginning and end, so it must've been gained first and then lost
+                    #         unestablished_links.add(company_link)
                 # if connections_lost[company][company_link] < connections_gained[company][company_link]:
                 #     reestablished_links += 1
                 # elif connections_lost[company][company_link] > connections_gained[company][company_link]:
@@ -158,58 +167,90 @@ def longitudinal_extraction(crisis, grouping):
                 #     print("MAJOR DATA FUCKUP!!", company, company_link)
             for link in lost_links:
                 companies_connections_change[company]["lost"][link] = connections_lost[company][link]
+                companies_connections_change[link]["incoming_lost"][company] = connections_lost[company][link]
             for link in gained_links:
                 companies_connections_change[company]["gained"][link] = connections_gained[company][link]
-            for link in unestablished_links:
-                companies_connections_change[company]["unestablished"][link] = connections_lost[company][link]
+                companies_connections_change[link]["incoming_gained"][company] = connections_gained[company][link]
+            # for link in unestablished_links:
+            #     companies_connections_change[company]["unestablished"][link] = connections_lost[company][link]
             for link in reestablished_links:
                 companies_connections_change[company]["reestablished"][link] = connections_gained[company][link]
             # reestablished_links = len(connections_lost[company].intersection(connections_gained[company]))
             group_reestablished_links += len(reestablished_links)
-            group_unestablished_links += len(unestablished_links)
+            # group_unestablished_links += len(unestablished_links)
             group_lost_links += len(lost_links)
             group_gained_links += len(gained_links)
-            group_sum += len(unestablished_links) + len(reestablished_links) + len(lost_links) + len(gained_links)
+            # group_sum += len(unestablished_links) + len(reestablished_links) + len(lost_links) + len(gained_links)
+            group_sum += len(lost_links) + len(gained_links)
             # print(connections_lost[company], connections_gained[company], connections_lost[company].intersection(connections_gained[company]), company)
-        if group_sum == 0:
-            continue
-        total_reestablished_links += group_reestablished_links
-        total_unestablished_links += group_unestablished_links
+        # if group_sum == 0:
+        #     continue
+        # total_reestablished_links += group_reestablished_links
+        # total_unestablished_links += group_unestablished_links
         total_lost_links += group_lost_links
         total_gained_links += group_gained_links
-        total_sum += group_sum
+        # total_sum += group_sum
         degree_difference = group_gained_links-group_lost_links
         total_degree_difference += degree_difference
-        connections_data[group] = {"unestablished": group_unestablished_links/group_sum, "reestablished" : group_reestablished_links/group_sum, "lost" : group_lost_links/group_sum, "gained" : group_gained_links/group_sum, "degree_difference":degree_difference}
+        # connections_data[group] = {"unestablished": group_unestablished_links/group_sum, "reestablished" : group_reestablished_links/group_sum, "lost" : group_lost_links/group_sum, "gained" : group_gained_links/group_sum, "degree_difference":degree_difference}
+        connections_data[group] = {"lost" : group_lost_links, "gained" : group_gained_links, "reestablished": group_reestablished_links, "degree_difference":degree_difference}
     
     # Regardless of grouping, show the change in connections by company
-    with open(f"../data/{crisis}_companies_connections_change.json", "w") as f:
+    with open(f"./data/{crisis}_companies_connections_change.json", "w") as f:
         json.dump(companies_connections_change, f, indent=4)
     # Using a grouping filter, aggregate/average the makeup of connection changes in group summary data
-    with open(f"../data/{crisis}_{grouping}_connections_data.json", "w") as f:
+    with open(f"./data/{crisis}_{grouping}_connections_data.json", "w") as f:
         json.dump(connections_data, f, indent=4)
-    # Calculate impacts/now efficiencies by group
-    with open(f"../data/{crisis}_{grouping}_impact_data.json", "w") as f:
-        json.dump(impact_data, f, indent=4)
+    with open(f"./data/{crisis}_global_metric_data.json", "w") as f:
+        json.dump(global_metric_data, f, indent=4)
 
-    print(f"Total degree sum (I think): {total_sum}")
+    # print(f"Total degree sum (I think): {total_sum}")
     print(f"Total lost: {total_lost_links}")
     print(f"Total gained: {total_gained_links}")
-    print(f"Total unnestablished: {total_unestablished_links}")
-    print(f"Total reestablished: {total_reestablished_links}")
+    # print(f"Total unestablished: {total_unestablished_links}")
+    # print(f"Total reestablished: {total_reestablished_links}")
     print(f"Total degree difference: {total_degree_difference}")
+
+def create_impact(snapshots, group_efficiency_data, global_metric_data):
+    """
+    Creates and plots impact/efficiency data
+    """
+    impact_data = {}
+    fig = plt.figure()
+    plot = fig.add_subplot(111)
+    for group in filter:
+        x_coords = []
+        y_coords = []
+        for timeframe in snapshots:
+            x_coords.append(timeframe)
+            y_coords.append(group_efficiency_data[timeframe][group])
+        baseline = y_coords[0]
+        impact = max(baseline - min(y_coords), 0)
+        total_impact = 0
+        for coord in y_coords:
+            total_impact += max(baseline - coord, 0)
+        data = []
+        data.append({x_coords[i]: y_coords[i] for i in range(len(x_coords))})
+        data.append(impact)
+        data.append(total_impact)
+        impact_data[group] = data
+        plot.plot(x_coords, y_coords, label=group)
+    plot.plot(snapshots, list(global_metric_data.values()), linewidth="5", markersize="6")
     # fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)           
     fig.show()
-    # if len(filter) < 25:
-    fig.legend(loc='upper left')
-    plt.savefig(f"../graphs/{crisis}_crisis_analysis_by_{grouping}.png")
+    if len(filter) < 25:
+        fig.legend(loc='upper left')
+    plt.savefig(f"./graphs/{crisis}_crisis_analysis_by_{grouping}.png")
+    # Calculate impacts/now efficiencies by group
+    with open(f"./data/{crisis}_{grouping}_impact_data.json", "w") as f:
+        json.dump(impact_data, f, indent=4)
 
 def longitudinal_analysis(crisis, grouping):
     """
     Take the crisis impact data and fit some kind of equation to it or analyze the relationship between the filter and the impact data.
     """
     if crisis == "2008":
-        snapshots = [17540, 17620, 17720, 17820, 18020, 18120, 18220, 18320, 18420, 18520, 18620, 18720, 18820, 18920, 19020, 19120, 19220, 19320, 19420, 19520]
+        snapshots = [17540, 17620, 17714, 17720, 17820, 18020, 18079, 18120, 18220, 18320, 18420, 18520, 18620, 18720, 18809, 18820, 18920, 19020, 19120, 19220, 19320, 19420, 19520]
         # snapshots = [17540, 17620]
     if crisis == "covid":
         snapshots = [21870, 21930, 21960, 22000, 22100, 22200, 22300, 22370]
