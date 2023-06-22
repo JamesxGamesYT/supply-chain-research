@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import scipy.stats
+import copy
 import statsmodels.api as smf
 import numpy as np
 import random
@@ -9,6 +10,8 @@ import time
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+import sklearn
 
 pd.set_option('display.max_columns', 100)
 
@@ -66,6 +69,7 @@ def company_network_analysis(timeframes):
     baseline = {}
     connection_lengths = {}
     company_country = {}
+    company_type = {}
     company_size = {}
     with open("./data/2008_companies_connections_change.json", "r") as f:
         connections_change = json.load(f)
@@ -89,7 +93,8 @@ def company_network_analysis(timeframes):
             baseline[company] = len(list(actual_undirected_base_G.neighbors(company)))
             company_size[company] = baseline[company] 
             company_country[company] = actual_undirected_base_G.nodes[company]["country"]
-        i = 0
+            company_type[company] = actual_undirected_base_G.nodes[company]["company_type"]
+        # i = 0
         print("Company sizes created")
         # for edge in undirected_base_G.edges:
         #     # print(undirected_base_G.edges[edge]["history"])
@@ -109,155 +114,146 @@ def company_network_analysis(timeframes):
         # #             proportion_gained[company] = len(G.neighbors)
         print("Connections length created")
         proportion_incoming_lost, proportion_lost, proportion_incoming_gained, proportion_gained = create_parameter_counts(timeframes[i], timeframes[i+1], baseline, undirected_base_G)
-        lost_edge_matrix = {"lost":[], "incoming_first":[], "outgoing_first":[], "incoming_second":[], "outgoing_second":[], "incoming_company_size":[], "outgoing_company_size":[], "same_country":[], "intercept":[]}
-        gained_edge_matrix = {"gained":[], "incoming_first":[], "outgoing_second":[], "outgoing_first":[], "incoming_second":[], "outgoing_second":[], "incoming_company_size":[], "outgoing_company_size":[], "same_country":[], "intercept":[]}
-        # reestablished_edge_matrix = {"reestablished":[], "incoming_first":[], "outgoing_second":[], "outgoing_first":[], "incoming_second":[], "outgoing_second":[], "incoming_company_size":[], "outgoing_company_size":[], "connection_length":[]}
-        # reestablished_edge_matrix = {"reestablished":[], "incoming_first":[], "outgoing_second":[], "outgoing_first":[], "incoming_second":[], "outgoing_second":[], "incoming_company_size":[], "outgoing_company_size":[], "same_country":[]}
-        print("Parmaeters created")
+        lost_edge_matrix = {
+            "incoming_supplier":[], 
+            "outgoing_supplier":[], 
+            "incoming_customer":[], 
+            "outgoing_customer":[], 
+            "supplier_company_size":[],
+            "customer_company_size":[], 
+            "supplier_country":[], 
+            "customer_country":[],
+            "supplier_company_type": [],
+            "customer_company_type": [], 
+            "intercept":[]}
+        # lost_edge_matrix = {"lost":[], "incoming_supplier":[], "outgoing_supplier":[], "incoming_customer":[], "outgoing_customer":[], "supplier_company_size":[], "customer_company_size":[], "same_country":[], "intercept":[]}
+        gained_edge_matrix = copy.deepcopy(lost_edge_matrix)
+        lost_edge_matrix["lost"] = []
+        gained_edge_matrix["gained"] = []
+        # gained_edge_matrix = {"gained":[], "incoming_supplier":[], "outgoing_customer":[], "outgoing_supplier":[], "incoming_customer":[], "outgoing_customer":[], "supplier_company_size":[], "customer_company_size":[], "supplier_country":[], "customer_country":[], "intercept":[]}
+        # gained_edge_matrix = {"gained":[], "incoming_supplier":[], "outgoing_customer":[], "outgoing_supplier":[], "incoming_customer":[], "outgoing_customer":[], "supplier_company_size":[], "customer_company_size":[], "same_country":[], "intercept":[]}
+        # net_edge_matrix = {"net":[], "incoming_supplier":[], "outgoing_customer":[], "outgoing_supplier":[], "incoming_customer":[], "outgoing_customer":[], "supplier_company_size":[], "customer_company_size":[], "same_country":[]}
+        # reestablished_edge_matrix = {"reestablished":[], "incoming_supplier":[], "outgoing_customer":[], "outgoing_supplier":[], "incoming_customer":[], "outgoing_customer":[], "supplier_company_size":[], "customer_company_size":[], "connection_length":[]}
+        # reestablished_edge_matrix = {"reestablished":[], "incoming_supplier":[], "outgoing_customer":[], "outgoing_supplier":[], "incoming_customer":[], "outgoing_customer":[], "supplier_company_size":[], "customer_company_size":[], "same_country":[]}
+        print("Parameters created")
         gained_true = 0
         gained_false = 0
         gained_total_num = 0
         total_possible = 0
-        for i_company in companies:
+        for i_company in undirected_base_G.nodes:
             # if i_company not in undirected_final_G.nodes:
                 # continue
-            for j_company in companies:
+            for j_company in undirected_base_G.nodes:
                 # if j_company not in undirected_final_G.nodes:
                     # continue
                 if i_company == j_company:
                     continue
-                # if j_company in connections_change[i_company]["reestablished"] or j_company in connections_change[i_company]["lost"]:
-                    # print("YOO!")
-                    # print(connections_change[i_company]["reestablished"], connections_change[i_company]["lost"], j_company)
                 if j_company in undirected_base_G.neighbors(i_company):
                     # if company_country[i_company] == company_country[j_company]:
-                    if j_company in undirected_final_G.neighbors(i_company):
+                    if i_company in undirected_final_G.nodes and j_company in undirected_final_G.neighbors(i_company):
                         lost_edge_matrix["lost"].append(False)
                     else:
                         lost_edge_matrix["lost"].append(True)
-                    lost_edge_matrix["incoming_first"].append(proportion_incoming_lost[i_company])
-                    lost_edge_matrix["outgoing_second"].append(proportion_lost[j_company])
-                    lost_edge_matrix["outgoing_first"].append(proportion_lost[i_company])
-                    lost_edge_matrix["incoming_second"].append(proportion_incoming_lost[j_company])
-                    lost_edge_matrix["incoming_company_size"].append(company_size[i_company])
-                    lost_edge_matrix["outgoing_company_size"].append(company_size[j_company])
-                    lost_edge_matrix["same_country"].append(int(company_country[i_company] == company_country[j_company]))
+                    lost_edge_matrix["incoming_supplier"].append(proportion_incoming_lost[i_company])
+                    lost_edge_matrix["outgoing_customer"].append(proportion_lost[j_company])
+                    lost_edge_matrix["outgoing_supplier"].append(proportion_lost[i_company])
+                    lost_edge_matrix["incoming_customer"].append(proportion_incoming_lost[j_company])
+                    lost_edge_matrix["supplier_company_size"].append(company_size[i_company])
+                    lost_edge_matrix["customer_company_size"].append(company_size[j_company])
+                    lost_edge_matrix["supplier_country"].append(company_country[i_company])
+                    lost_edge_matrix["customer_country"].append(company_country[j_company])
+                    lost_edge_matrix["supplier_company_type"].append(company_type[i_company])
+                    lost_edge_matrix["customer_company_type"].append(company_type[j_company])
+                    # lost_edge_matrix["same_country"].append(int(company_country[i_company] == company_country[j_company]))
                     lost_edge_matrix["intercept"].append(1)
-                    # if len(lost_edge_matrix["lost"]) < 101:
-                        # print("SAME COMPANY!", i_company, j_company, len(lost_edge_matrix["lost"]), int(company_country[i_company] == company_country[j_company]))
                 # Gained nodes
-                elif j_company in undirected_final_G.neighbors(i_company):
-                    gained_edge_matrix["gained"].append(True)
-                    gained_edge_matrix["incoming_first"].append(proportion_incoming_gained[i_company])
-                    gained_edge_matrix["outgoing_second"].append(proportion_gained[j_company])
-                    gained_edge_matrix["outgoing_first"].append(proportion_gained[i_company])
-                    gained_edge_matrix["incoming_second"].append(proportion_incoming_gained[j_company])
-                    gained_edge_matrix["incoming_company_size"].append(company_size[i_company])
-                    gained_edge_matrix["outgoing_company_size"].append(company_size[j_company])
-                    gained_edge_matrix["same_country"].append(int(company_country[i_company] == company_country[j_company]))
-                    gained_edge_matrix["intercept"].append(1)
-                    gained_true += 2
-                    gained_total_num += 2
-                        # if undirected_final_G.nodes
-                        # gained_edge_matrix["same_country"]
-                # Edge that just wasn't gained
                 else:
-                    if gained_true > gained_false:
-                        gained_edge_matrix["gained"].append(False)
-                        gained_edge_matrix["incoming_first"].append(proportion_incoming_gained[i_company])
-                        gained_edge_matrix["outgoing_second"].append(proportion_gained[j_company])
-                        gained_edge_matrix["outgoing_first"].append(proportion_gained[i_company])
-                        gained_edge_matrix["incoming_second"].append(proportion_incoming_gained[j_company])
-                        gained_edge_matrix["incoming_company_size"].append(company_size[i_company])
-                        gained_edge_matrix["outgoing_company_size"].append(company_size[j_company])
-                        gained_edge_matrix["same_country"].append(int(company_country[i_company] == company_country[j_company]))
+                    if i_company in undirected_final_G.nodes and (j_company in undirected_final_G.neighbors(i_company) or gained_true > gained_false):
+                        if j_company in undirected_final_G.neighbors(i_company):
+                            gained_true += 2
+                            gained_total_num += 2
+                            gained_edge_matrix["gained"].append(True)
+                        elif gained_true > gained_false:
+                            # Edge that just wasn't gained
+                            gained_false += 1
+                            gained_edge_matrix["gained"].append(False)
+                        gained_edge_matrix["incoming_supplier"].append(proportion_incoming_gained[i_company])
+                        gained_edge_matrix["outgoing_customer"].append(proportion_gained[j_company])
+                        gained_edge_matrix["outgoing_supplier"].append(proportion_gained[i_company])
+                        gained_edge_matrix["incoming_customer"].append(proportion_incoming_gained[j_company])
+                        gained_edge_matrix["supplier_company_size"].append(company_size[i_company])
+                        gained_edge_matrix["customer_company_size"].append(company_size[j_company])
+                        gained_edge_matrix["supplier_country"].append(company_country[i_company])
+                        gained_edge_matrix["customer_country"].append(company_country[j_company])
+                        gained_edge_matrix["supplier_company_type"].append(company_type[i_company])
+                        gained_edge_matrix["customer_company_type"].append(company_type[j_company])
+                        # gained_edge_matrix["same_country"].append(int(company_country[i_company] == company_country[j_company]))
                         gained_edge_matrix["intercept"].append(1)
-                        gained_false += 1
-                    gained_total_num += 1
+                            # if undirected_final_G.nodes
+                            # gained_edge_matrix["same_country"]
+                    # gained_total_num += 1
                 total_possible += 1
-                # Either use an else if to analyze reestablished links
-                # if j_company in connections_change[i_company]["reestablished"] or j_company in connections_change[i_company]["lost"]:
-                #     if j_company in connections_change[i_company]["reestablished"]:
-                #         if int(timeframes[i]) < connections_change[i_company]["reestablished"][j_company] <= int(timeframes[i+1]):
-                #             pass
-                #         else:
-                #             continue
-                #     if j_company in connections_change[i_company]["lost"]:
-                #         # Lost connections from before this timeframe can still be repaired
-                #         if int(connections_change[i_company]["lost"][j_company]) <= int(timeframes[i+1]):
-                #             pass
-                #         else:
-                #             continue
-                #     if j_company in undirected_final_G.neighbors(i_company):
-                #         reestablished_edge_matrix["reestablished"].append(True)
-                #         reestablished_edge_matrix["incoming_first"].append(proportion_incoming_gained[i_company])
-                #         reestablished_edge_matrix["outgoing_second"].append(proportion_gained[j_company])
-                #         reestablished_edge_matrix["outgoing_first"].append(proportion_gained[i_company])
-                #         reestablished_edge_matrix["incoming_second"].append(proportion_incoming_gained[j_company])
-                #         # reestablished_edge_matrix["connection_length"].append(connection_lengths[((i_company, j_company))])
-                #         reestablished_edge_matrix["incoming_company_size"].append(company_size[i_company])
-                #         reestablished_edge_matrix["outgoing_company_size"].append(company_size[j_company])
-                #         # Or add it as a possible factor
-                #         # if j_company in connections_change[i_company]["reestablished"]:
-                #         #     gained_edge_matrix["reestablished"] = 1
-                #         # else:
-                #         #     gained_edge_matrix["reestablished"] = 0
-                #         # print(proportion_gained[i_company], proportion_gained[j_company], i_company, j_company)
-                #     else:
-                #         reestablished_edge_matrix["reestablished"].append(False)
-                #         reestablished_edge_matrix["incoming_first"].append(proportion_incoming_gained[i_company])
-                #         reestablished_edge_matrix["outgoing_second"].append(proportion_gained[j_company])
-                #         reestablished_edge_matrix["outgoing_first"].append(proportion_gained[i_company])
-                #         reestablished_edge_matrix["incoming_second"].append(proportion_incoming_gained[j_company])
-                #         # reestablished_edge_matrix["connection_length"].append(connection_lengths[((i_company, j_company))])
-                #         reestablished_edge_matrix["incoming_company_size"].append(company_size[i_company])
-                #         reestablished_edge_matrix["outgoing_company_size"].append(company_size[j_company])
-                        # if j_company in connections_change[i_company]["reestablished"]:
-                        #     reestablished_edge_matrix["reestablished"] = 1
-                        # else:
-                        #     reestablished_edge_matrix["reestablished"] = 0
         print("Edge matrices created!")
         print("dfs created!")
         lost_df = pd.DataFrame.from_dict(lost_edge_matrix)
+        supplier_countries = pd.get_dummies(lost_df["supplier_country"], prefix="supplier", dtype=int)
+        customer_countries = pd.get_dummies(lost_df["customer_country"], prefix="customer", dtype=int)
+        lost_df = lost_df.drop(["supplier_country", "customer_country"], axis=1).join([supplier_countries, customer_countries])
+        supplier_company_types = pd.get_dummies(lost_df["supplier_company_type"], prefix="supplier", dtype=int)
+        customer_company_types = pd.get_dummies(lost_df["customer_company_type"], prefix="customer", dtype=int)
+        lost_df = lost_df.drop(["supplier_company_type", "customer_company_type"], axis=1).join([supplier_company_types, customer_company_types])
         print(lost_df.head(20).to_string())
         lost_true = lost_df[lost_df["lost"] == True]
         lost_false = lost_df[lost_df["lost"] == False]
         print(f"# of Lost connections (true) {len(lost_true)}, # of not lost connections (false) {len(lost_false)}")
         # lost_false = lost_false.loc[np.random.choice(lost_false.index, size=len(lost_true))]
         # lost_total = pd.concat([lost_false, lost_true])
-
-        # reestablished_df = pd.DataFrame.from_dict(reestablished_edge_matrix)
-        # print(reestablished_df)
-        # reestablished_true = reestablished_df[reestablished_df["reestablished"] == True]
-        # reestablished_false = reestablished_df[reestablished_df["reestablished"] == False]
-        # reestablished_false = reestablished_false.loc[np.random.choice(reestablished_false.index, size=len(reestablished_true))]
-        # reestablished_total = pd.concat([reestablished_false, reestablished_true])
-        # print(f"# of reestablished connections (true) {len(reestablished_true)}, # of not reestablished connections (false) {len(reestablished_false)}")
+        lost_df.to_csv(timeframes[i]+"_"+timeframes[i+1]+"_lost_model_independent_variables")
+        del lost_df
+        del lost_edge_matrix
 
         gained_df = pd.DataFrame.from_dict(gained_edge_matrix)
+        supplier_countries = pd.get_dummies(gained_df["supplier_country"], prefix="supplier", dtype=int)
+        customer_countries = pd.get_dummies(gained_df["customer_country"], prefix="customer", dtype=int)
+        gained_df = gained_df.drop(["supplier_country", "customer_country"], axis=1 ).join([supplier_countries, customer_countries])
+        supplier_company_types = pd.get_dummies(gained_df["supplier_company_type"], prefix="supplier", dtype=int)
+        customer_company_types = pd.get_dummies(gained_df["customer_company_type"], prefix="customer", dtype=int)
+        gained_df = gained_df.drop(["supplier_company_type", "customer_company_type"], axis=1).join([supplier_company_types, customer_company_types])
         print(gained_df.head(20).to_string())
         gained_true = gained_df[gained_df["gained"] == True]
         gained_false = gained_df[gained_df["gained"] == False]
         # gained_false = gained_false.loc[np.random.choice(gained_false.index, size=len(gained_true))]
         # gained_total = pd.concat([gained_false, gained_true])
         print(f"# of gained connections (true) {len(gained_true)}, # of not gained connections (false) {len(gained_false)}")
-        lost_probit = smf.Probit(lost_df["lost"], lost_df[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country", "intercept"]])
-        # lost_probit = smf.Probit(lost_total["lost"], lost_total[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country"]])
-        # reestablished_probit = smf.Probit(reestablished_total["reestablished"], reestablished_total[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "connection_length", "incoming_company_size", "outgoing_company_size"]])
-        # reestablished_probit = smf.Probit(reestablished_total["reestablished"], reestablished_total[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size"]])
-        gained_probit = smf.Probit(gained_df["gained"], gained_df[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country", "intercept"]])
-        # gained_probit = smf.Probit(gained_total["gained"], gained_total[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country"]])
+        
+        gained_df.to_csv(timeframes[i]+"_"+timeframes[i+1]+"_gained_model_independent_variables")
+        del gained_df
+        del gained_edge_matrix
+
+def fit_model(timeframes):
+    for i in range(len(timeframes)-1):
+        lost_df = pd.read_csv(timeframes[i]+"_"+timeframes[i+1]+"_lost_model_independent_variables")
+        gained_df = pd.read_csv(timeframes[i]+"_"+timeframes[i+1]+"_gained_model_independent_variables")
+        logistic_model = LogisticRegression(solver='liblinear', random_state=0, class_weight='balanced')
+        logistic_model.fit(lost_df.drop("lost", axis=1), lost_df["lost"])
+        print(logistic_model.intercept_)
+        print(logistic_model.coef_, lost_df.drop("lost", axis=1).columns, "coefficients")
+        logistic_model.score(lost_df.drop("lost", axis=1), lost_df["lost"])
+        print(sklearn.metrics.classification_report(lost_df["lost"], logistic_model.predict(lost_df.drop("lost", axis=1))))
+
+        logistic_model = LogisticRegression(solver='liblinear', random_state=0, class_weight='balanced')
+        logistic_model.fit(gained_df.drop("gained", axis=1), gained_df["gained"])
+        print(logistic_model.intercept_)
+        print(logistic_model.coef_, gained_df.drop("gained", axis=1).columns, "coefficients")
+        logistic_model.score(gained_df.drop("gained", axis=1), gained_df["gained"])
+        print(sklearn.metrics.classification_report(gained_df["gained"], logistic_model.predict(gained_df.drop("gained", axis=1))))
+
+        lost_probit = smf.Probit(lost_df["lost"], lost_df.drop(["lost"], axis=1))
+        # lost_probit = smf.Probit(lost_df["lost"], lost_df[["incoming_supplier", "outgoing_customer", "outgoing_supplier", "incoming_customer", "supplier_company_size", "customer_company_size", "same_country", "intercept"]])
+        gained_probit = smf.Probit(gained_df["gained"], gained_df.drop(["gained"], axis=1))
+        # gained_probit = smf.Probit(gained_df["gained"], gained_df[["incoming_supplier", "outgoing_customer", "outgoing_supplier", "incoming_customer", "supplier_company_size", "customer_company_size", "same_country", "intercept"]])
         lost_result=lost_probit.fit()
         print(lost_result.summary2())
-        # print(lost_df[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country"]].shape)
-        # print(lost_df[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country"]].head(1).shape)
-        # print(lost_df[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country"]].head(1))
-        # predictions = lost_probit.predict(params=lost_df[["incoming_first", "outgoing_second", "outgoing_first", "incoming_second", "incoming_company_size", "outgoing_company_size", "same_country"]].head(1))
-        # predictions = lost_probit.predict(lost_probit.params)
-        # print(predictions, "predictions")
-        # print(predictions.shape)
-        # reestablished_result=reestablished_probit.fit()
-        # print(reestablished_result.summary2())
         gained_result=gained_probit.fit()
         print(gained_result.summary2())
 
@@ -265,18 +261,14 @@ def company_network_analysis(timeframes):
         # print("Average probability of reestablishment", len(reestablished_true)/len(reestablished_df), len(reestablished_true),len(reestablished_df))
         # print("Average probability of gained", len(gained_true)/gained_total_num, len(gained_true),gained_total_num)
         # print("Average probability gained overall total", len(gained_true)/total_possible, len(gained_true), total_possible)
-        print("Average proportion of lost incoming_first", lost_df["incoming_first"].sum()/len(lost_df))
-        print("Average proportion of lost outgoing_first", lost_df["outgoing_first"].sum()/len(lost_df))
-        print("Average proportion of lost incoming_second", lost_df["incoming_second"].sum()/len(lost_df))
-        print("Average proportion of lost outgoing_second", lost_df["outgoing_second"].sum()/len(lost_df))
-        # print("Average proportion of reestablished incoming_first", reestablished_df["incoming_first"].sum()/len(reestablished_df))
-        # print("Average proportion of reestablished outgoing_first", reestablished_df["outgoing_first"].sum()/len(reestablished_df))
-        # print("Average proportion of reestablished incoming_second", reestablished_df["incoming_second"].sum()/len(reestablished_df))
-        # print("Average proportion of reestablished outgoing_second", reestablished_df["outgoing_second"].sum()/len(lost_df))
-        print("Average proportion of gained incoming_first", gained_df["incoming_first"].sum()/len(gained_df))
-        print("Average proportion of gained outgoing_first", gained_df["outgoing_first"].sum()/len(gained_df))
-        print("Average proportion of gained incoming_second", gained_df["incoming_second"].sum()/len(gained_df))
-        print("Average proportion of gained outgoing_second", gained_df["outgoing_second"].sum()/len(gained_df))
+        print("Average proportion of lost incoming_supplier", lost_df["incoming_supplier"].sum()/len(lost_df))
+        print("Average proportion of lost outgoing_supplier", lost_df["outgoing_supplier"].sum()/len(lost_df))
+        print("Average proportion of lost incoming_customer", lost_df["incoming_customer"].sum()/len(lost_df))
+        print("Average proportion of lost outgoing_customer", lost_df["outgoing_customer"].sum()/len(lost_df))
+        print("Average proportion of gained incoming_supplier", gained_df["incoming_supplier"].sum()/len(gained_df))
+        print("Average proportion of gained outgoing_supplier", gained_df["outgoing_supplier"].sum()/len(gained_df))
+        print("Average proportion of gained incoming_customer", gained_df["incoming_customer"].sum()/len(gained_df))
+        print("Average proportion of gained outgoing_customer", gained_df["outgoing_customer"].sum()/len(gained_df))
 
 
 def probability_compute_fun(x,G,type_str):
@@ -406,7 +398,7 @@ def simulation(timeframes):
         efficiencies.append(nx.local_efficiency(G.to_undirected()))
         end_time=time.time()
         print(len(G.edges()), len(remove_edge_set), len(reestablish_edge_set), len(add_edge_set))
-        print('used seconds', end_time-start_time, "\n")
+        print('used customers', end_time-start_time, "\n")
     plt.plot([i for i in range(timesteps+1)], node_counts, label="node count")
     plt.plot([i for i in range(timesteps+1)], edge_counts, label="edge count")
     plt.plot([i for i in range(timesteps+1)], removed_edges, label="removed edges")
@@ -440,4 +432,5 @@ if __name__ == "__main__":
     if timeframe == "covid":
         timeframes = ["21870", "21930", "21960", "22000", "22100", "22200", "22300", "22370"]
     company_network_analysis(timeframes)
+    fit_model(timeframes)
     # simulation(timeframes)

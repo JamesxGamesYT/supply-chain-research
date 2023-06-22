@@ -438,6 +438,10 @@ if __name__ =="__main__":
             analyze_graph(timeframe, filter)
         else:
             analyze_graph(timeframe)
+    elif function == "calculate":
+        timeframe = sys.argv[2]
+        date = pd.to_datetime(int(timeframe), origin='1960-01-01', unit='D')
+        print(f"Date: {date}")
         # try:
         # except FileNotFoundError:
             # G = nx.read_gexf(root_dir+"/complete_graph.gexf")
